@@ -1,0 +1,489 @@
+{
+  "files": {
+    "file_1790370768588_7fe1b3a5": {
+      "fileId": "file_1790370768588_7fe1b3a5",
+      "filename": "test_document.txt",
+      "size": 52,
+      "mimeType": "text/plain",
+      "hash": "8fbb46cc0cd0c4529d147b4dfddbdf7928769d4c629d6e885b04906b67323261",
+      "version": 1,
+      "createdAt": "2026-09-25T21:12:48.605Z",
+      "updatedAt": "2026-09-25T22:40:00.523Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.516Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.519Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.521Z"
+        },
+        "nodeD": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.523Z"
+        }
+      }
+    },
+    "file_1790370913761_3684fc4b": {
+      "fileId": "file_1790370913761_3684fc4b",
+      "filename": "hackathon_test.json",
+      "size": 27,
+      "mimeType": "text/plain",
+      "hash": "fce03f142d6efd83b3f9ace825b370c1bc0682bdc645b2b396f7631c775151e7",
+      "version": 1,
+      "createdAt": "2026-09-25T21:15:13.769Z",
+      "updatedAt": "2026-09-25T22:40:00.532Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.526Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.528Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.530Z"
+        },
+        "nodeD": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.532Z"
+        }
+      }
+    },
+    "file_1790371361309_4a82bca6": {
+      "fileId": "file_1790371361309_4a82bca6",
+      "filename": "sensor_telemetry_batch_1185.json",
+      "size": 666,
+      "mimeType": "application/json",
+      "hash": "1808216c6544be8b4aa2e56fff19f523cc3fe689474a2b970fd8eec7bf48eadb",
+      "version": 1,
+      "createdAt": "2026-09-25T21:22:41.311Z",
+      "updatedAt": "2026-09-25T22:40:00.538Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.534Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.536Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.538Z"
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "file_1790371366555_104d22c0": {
+      "fileId": "file_1790371366555_104d22c0",
+      "filename": "sensor_telemetry_batch_6548.json",
+      "size": 666,
+      "mimeType": "application/json",
+      "hash": "62189381499596a3b8c20fc51568511a0d4ba388be61f259644daf823c2aa528",
+      "version": 1,
+      "createdAt": "2026-09-25T21:22:46.556Z",
+      "updatedAt": "2026-09-25T22:40:00.542Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.539Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.541Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.542Z"
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "file_1790371398064_29f68c47": {
+      "fileId": "file_1790371398064_29f68c47",
+      "filename": "luffy-gear-5-vs-kaidou-one-piece-moewalls-com.mp4",
+      "size": 42511294,
+      "mimeType": "video/mp4",
+      "hash": "a3e759ea2e066e0c221375557e3245fcc47a2d09cd85e6aedc23710b2a33a9b5",
+      "version": 1,
+      "createdAt": "2026-09-25T21:23:18.100Z",
+      "updatedAt": "2026-09-25T22:40:00.713Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.598Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.658Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.713Z"
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "file_1790372058840_6845a8d6": {
+      "fileId": "file_1790372058840_6845a8d6",
+      "filename": "project_alpha_pitch.pdf",
+      "size": 16,
+      "mimeType": "text/plain",
+      "hash": "7dc08127358da8c744ec7c5859c6b5e58c18eaf07afe22759fc835b7f0f84f96",
+      "version": 1,
+      "owner": "alice.hacks@gmail.com",
+      "ownerName": "Demo Engineer",
+      "authorizedAccounts": [
+        "bob.dev@gmail.com"
+      ],
+      "createdAt": "2026-09-25T21:34:18.848Z",
+      "updatedAt": "2026-09-25T22:40:00.720Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.716Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.717Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.719Z"
+        },
+        "nodeD": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.720Z"
+        }
+      }
+    },
+    "file_1790373020386_2c902180": {
+      "fileId": "file_1790373020386_2c902180",
+      "filename": "luffy-gear-5-vs-kaidou-one-piece-moewalls-com.mp4",
+      "size": 42511294,
+      "mimeType": "video/mp4",
+      "hash": "a3e759ea2e066e0c221375557e3245fcc47a2d09cd85e6aedc23710b2a33a9b5",
+      "version": 1,
+      "owner": "alice.hacks@gmail.com",
+      "ownerName": "Alice (Owner)",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-25T21:50:20.430Z",
+      "updatedAt": "2026-09-25T22:40:00.869Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.774Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.825Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.869Z"
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "file_1790373113196_6fb72180": {
+      "fileId": "file_1790373113196_6fb72180",
+      "filename": "Screenshot 2026-09-05 at 10.50.21 AM (1).pdf",
+      "size": 307241,
+      "mimeType": "application/pdf",
+      "hash": "4300cc7c7bff44ad23b4dcfe47bf586216f4a5b114ec7a91a65fd798c64fc70c",
+      "version": 1,
+      "owner": "bob.dev@gmail.com",
+      "ownerName": "Bob (Collaborator)",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-25T21:51:53.198Z",
+      "updatedAt": "2026-09-25T22:40:00.879Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.872Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.877Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.879Z"
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "file_1790373774840_15bf713e": {
+      "fileId": "file_1790373774840_15bf713e",
+      "filename": "firebase-cluster-test.txt",
+      "size": 54,
+      "mimeType": "text/plain",
+      "hash": "1e14aa50440e1ed326e0e39ca6b6804c483614ff4ec324767ccf386b4fd7c998",
+      "version": 1,
+      "owner": "demo@vault.local",
+      "ownerName": "Demo Engineer",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-25T22:02:54.846Z",
+      "updatedAt": "2026-09-25T22:40:00.883Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.880Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.882Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.883Z"
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "file_1790373829995_05eb69de": {
+      "fileId": "file_1790373829995_05eb69de",
+      "filename": "firebase-cluster-test.txt",
+      "size": 54,
+      "mimeType": "text/plain",
+      "hash": "1e14aa50440e1ed326e0e39ca6b6804c483614ff4ec324767ccf386b4fd7c998",
+      "version": 1,
+      "owner": "demo@vault.local",
+      "ownerName": "Demo Engineer",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-25T22:03:49.997Z",
+      "updatedAt": "2026-09-25T22:40:00.888Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.884Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.885Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.887Z"
+        },
+        "nodeD": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.888Z"
+        }
+      }
+    },
+    "file_1790374824892_d0a61cc3": {
+      "fileId": "file_1790374824892_d0a61cc3",
+      "filename": "micro-cluster-test.txt",
+      "size": 58,
+      "mimeType": "text/plain",
+      "hash": "eb5558142dbf1c8f280464e14d75f591ecac7ba70d4d5164c8d66fb61b6f9952",
+      "version": 1,
+      "owner": "demo@vault.local",
+      "ownerName": "Demo Engineer",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-25T22:20:24.913Z",
+      "updatedAt": "2026-09-25T22:20:24.930Z",
+      "replicas": {
+        "nodeA": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": "2026-09-25T22:20:24.921Z"
+        },
+        "nodeB": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": "2026-09-25T22:20:24.927Z"
+        },
+        "nodeC": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": "2026-09-25T22:20:24.930Z"
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "file_1790374867322_aa02acbe": {
+      "fileId": "file_1790374867322_aa02acbe",
+      "filename": "microservice-cluster-demo.txt",
+      "size": 83,
+      "mimeType": "text/plain",
+      "hash": "04046208b7fb7ae13c0fd19b1601b81382edfa02cebf9eb794b9365ac3ec170e",
+      "version": 1,
+      "owner": "demo@vault.local",
+      "ownerName": "Demo Engineer",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-25T22:21:07.323Z",
+      "updatedAt": "2026-09-25T22:40:00.892Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.889Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.890Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.891Z"
+        },
+        "nodeD": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:40:00.892Z"
+        }
+      }
+    },
+    "file_1790376308079_c56bace5": {
+      "fileId": "file_1790376308079_c56bace5",
+      "filename": "Kalvium_Web_Development_Foundations_Exam_Guide.pdf",
+      "size": 106305,
+      "mimeType": "application/pdf",
+      "hash": "f77655f5e8a9d62bc0f8592a694737a181b5b7030d36c3dc3b984e5d5526f5b4",
+      "version": 1,
+      "owner": "bob.dev@gmail.com",
+      "ownerName": "Bob (Collaborator)",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-25T22:45:08.083Z",
+      "updatedAt": "2026-09-25T22:45:08.091Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:45:08.090Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:45:08.091Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-25T22:45:08.090Z"
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    }
+  },
+  "nodes": {
+    "nodeA": {
+      "id": "nodeA",
+      "name": "Storage Node A",
+      "role": "primary",
+      "status": "healthy",
+      "consecutiveFailures": 0,
+      "lastPing": "2026-09-25T22:40:00.496Z",
+      "simulatedFailure": false
+    },
+    "nodeB": {
+      "id": "nodeB",
+      "name": "Storage Node B",
+      "role": "primary",
+      "status": "healthy",
+      "consecutiveFailures": 0,
+      "lastPing": "2026-09-25T22:40:00.499Z",
+      "simulatedFailure": false
+    },
+    "nodeC": {
+      "id": "nodeC",
+      "name": "Storage Node C",
+      "role": "primary",
+      "status": "healthy",
+      "consecutiveFailures": 0,
+      "lastPing": "2026-09-25T22:40:00.501Z",
+      "simulatedFailure": false
+    },
+    "nodeD": {
+      "id": "nodeD",
+      "name": "Storage Node D (Standby)",
+      "role": "standby",
+      "status": "standby",
+      "consecutiveFailures": 0,
+      "lastPing": "2026-09-25T22:40:00.503Z",
+      "simulatedFailure": false
+    }
+  },
+  "stats": {
+    "totalUploads": 12,
+    "totalRecoveries": 5,
+    "totalIntegrityChecks": 17
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "vault",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "nodes": "node scripts/start-nodes.mjs",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.114.3",
+    "@react-three/fiber": "^8.17.10",
+    "async-mutex": "^0.5.0",
+    "firebase": "^12.19.0",
+    "framer-motion": "^13.4.4",
+    "lucide-react": "^0.453.0",
+    "next": "^14.2.15",
+    "next-auth": "^4.24.15",
+    "node-cron": "^3.0.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14"
+  }
+}

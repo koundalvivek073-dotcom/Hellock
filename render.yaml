@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: hellock-vault
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: REPLICATION_FACTOR
+        value: 3
+      - key: WRITE_QUORUM
+        value: 2
+      - key: HEALTH_CHECK_INTERVAL_SECONDS
+        value: 10
+      - key: STANDBY_NODE
+        value: nodeD
+      - key: NEXTAUTH_SECRET
+        generateValue: true
