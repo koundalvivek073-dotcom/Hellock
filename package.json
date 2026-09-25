@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "nodes": "node scripts/start-nodes.mjs",
+    "node:one": "node scripts/run-node.mjs",
     "build": "next build",
     "start": "next start"
   },

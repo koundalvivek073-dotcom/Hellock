@@ -450,7 +450,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-25T22:40:00.496Z",
+      "lastPing": "2026-09-25T23:51:00.457Z",
       "simulatedFailure": false
     },
     "nodeB": {
@@ -459,7 +459,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-25T22:40:00.499Z",
+      "lastPing": "2026-09-25T23:51:00.461Z",
       "simulatedFailure": false
     },
     "nodeC": {
@@ -468,7 +468,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-25T22:40:00.501Z",
+      "lastPing": "2026-09-25T23:51:00.465Z",
       "simulatedFailure": false
     },
     "nodeD": {
@@ -477,7 +477,7 @@
       "role": "standby",
       "status": "standby",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-25T22:40:00.503Z",
+      "lastPing": "2026-09-25T23:51:00.469Z",
       "simulatedFailure": false
     }
   },

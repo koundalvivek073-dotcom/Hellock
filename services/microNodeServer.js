@@ -1,6 +1,7 @@
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
+import { getNodeTopology, resolveNodeUrl, isDistributedDeployment } from './nodeTopology.js';
 
 /**
  * ==============================================================================
@@ -12,12 +13,17 @@ import path from 'path';
  *   - Node B: http://127.0.0.1:4002
  *   - Node C: http://127.0.0.1:4003
  *   - Node D: http://127.0.0.1:4004 (Standby Failover Target)
- * 
+ *
  * 100% Free, Zero Cloud Setup, No Credit Cards, Completely Offline-Resilient.
  * Provides authentic HTTP REST networking, socket timeouts, and process failure
  * simulation for high-impact hackathon demonstrations.
+ *
+ * The bind address and advertised URL are now env-configurable, so this same
+ * cluster can be split across 4 real machines / containers. See nodeTopology.js.
  * ==============================================================================
  */
+
+export const NODE_BIND_HOST = process.env.NODE_BIND_HOST || '127.0.0.1';
 
 export const NODE_CONFIGS = {
   nodeA: { id: 'nodeA', port: 4001, name: 'Storage Node A' },
@@ -25,6 +31,13 @@ export const NODE_CONFIGS = {
   nodeC: { id: 'nodeC', port: 4003, name: 'Storage Node C' },
   nodeD: { id: 'nodeD', port: 4004, name: 'Storage Node D (Standby)' },
 };
+
+// Attach the env-resolved advertised URL to each config so every existing
+// consumer (status API, dashboards, start-nodes banner) stays unchanged.
+for (const [id, cfg] of Object.entries(NODE_CONFIGS)) {
+  cfg.url = resolveNodeUrl(id, cfg.port);
+  cfg.external = isDistributedDeployment();
+}
 
 export const BASE_NODES_DIR = path.join(process.cwd(), 'data', 'nodes');
 
@@ -218,7 +231,11 @@ export function createNodeServer(nodeId, port) {
 }
 
 /**
- * Starts all 4 node servers in-process if not already listening.
+ * Starts node servers in-process if not already listening.
+ *
+ * If NODE_ID is set (single-node container), only that node is started so each
+ * storage node can live in its own container. Otherwise all 4 boot together,
+ * which is the local single-process dev mode.
  */
 export async function startAllNodes() {
   if (global._hellockMicroNodesStarted) {
@@ -227,7 +244,13 @@ export async function startAllNodes() {
   global._hellockMicroNodesStarted = true;
   global._hellockMicroNodes = global._hellockMicroNodes || {};
 
+  const onlyId = (process.env.NODE_ID || '').trim();
+  if (onlyId && !NODE_CONFIGS[onlyId]) {
+    console.warn(`[NODE_CLUSTER] NODE_ID="${onlyId}" is unknown; starting all nodes instead.`);
+  }
+
   for (const [nodeId, cfg] of Object.entries(NODE_CONFIGS)) {
+    if (onlyId && NODE_CONFIGS[onlyId] && nodeId !== onlyId) continue;
     if (global._hellockMicroNodes[nodeId]) continue;
 
     const server = createNodeServer(nodeId, cfg.port);
@@ -241,8 +264,8 @@ export async function startAllNodes() {
     });
 
     try {
-      server.listen(cfg.port, '127.0.0.1', () => {
-        console.log(`[NODE_CLUSTER] ${cfg.name} listening on http://127.0.0.1:${cfg.port}`);
+      server.listen(cfg.port, NODE_BIND_HOST, () => {
+        console.log(`[NODE_CLUSTER] ${cfg.name} listening on http://${NODE_BIND_HOST}:${cfg.port} (advertised: ${cfg.url})`);
       });
       global._hellockMicroNodes[nodeId] = server;
     } catch (err) {

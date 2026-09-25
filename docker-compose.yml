@@ -1,0 +1,108 @@
+# ==============================================================================
+# HELLOCK - 4-node distributed storage on docker-compose
+# ==============================================================================
+# Runs the WEB tier as one container and each STORAGE NODE as its own container,
+# so the cluster is genuinely split across 5 network namespaces. This is the
+# real distributed deployment that services/nodeTopology.js makes possible.
+#
+#   docker compose up --build
+#   open http://localhost:3000
+#
+# Requires: Docker with compose v2.
+# ==============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Web tier: Next.js UI + API. Talks to the 4 nodes over the internal network.
+  # ---------------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hellock-web
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      # Per-node URLs resolving to the compose service names.
+      NODE_A_URL: http://node-a:4001
+      NODE_B_URL: http://node-b:4001
+      NODE_C_URL: http://node-c:4001
+      NODE_D_URL: http://node-d:4001
+      # Pass real secrets through an env file, never bake them into the image.
+      # Create .env from .env.example and fill in NEXTAUTH_SECRET etc.
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-please_generate_a_real_secret}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    depends_on:
+      - node-a
+      - node-b
+      - node-c
+      - node-d
+    networks:
+      - hellock-net
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Storage nodes. Each is a separate container with its own data volume.
+  # ---------------------------------------------------------------------------
+  node-a: &node
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Boot ONLY this node (NODE_ID is honoured by startAllNodes), so the
+    # container doesn't also start a redundant web server.
+    entrypoint: ["node", "scripts/run-node.mjs"]
+    environment:
+      NODE_BIND_HOST: 0.0.0.0
+      NODE_ID: nodeA
+    volumes:
+      - node-a-data:/app/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:4001/health',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - hellock-net
+    restart: unless-stopped
+
+  node-b:
+    <<: *node
+    container_name: hellock-node-b
+    environment:
+      NODE_BIND_HOST: 0.0.0.0
+      NODE_ID: nodeB
+    volumes:
+      - node-b-data:/app/data
+
+  node-c:
+    <<: *node
+    container_name: hellock-node-c
+    environment:
+      NODE_BIND_HOST: 0.0.0.0
+      NODE_ID: nodeC
+    volumes:
+      - node-c-data:/app/data
+
+  node-d:
+    <<: *node
+    container_name: hellock-node-d
+    environment:
+      NODE_BIND_HOST: 0.0.0.0
+      NODE_ID: nodeD
+    volumes:
+      - node-d-data:/app/data
+
+networks:
+  hellock-net:
+    driver: bridge
+
+volumes:
+  node-a-data:
+  node-b-data:
+  node-c-data:
+  node-d-data:

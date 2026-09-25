@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NodeVisualization from '@/components/NodeVisualization';
 import NodeStatusGrid from '@/components/NodeStatusGrid';
 import EventLog from '@/components/EventLog';
+import ReplicaMap from '@/components/ReplicaMap';
+import ChaosTheater from '@/components/ChaosTheater';
 import {
   Shield,
   RefreshCw,
@@ -43,7 +45,7 @@ export default function AdminDemoPage() {
       const res = await fetch('/api/status', { cache: 'no-store' });
       if (res.ok) {
         const json = await res.json();
-        
+
         // Detect state changes across nodes for large mission-control banner
         if (json.nodes && Object.keys(prevNodesRef.current).length > 0) {
           for (const [nodeId, node] of Object.entries(json.nodes)) {
@@ -348,7 +350,17 @@ export default function AdminDemoPage() {
         />
       </motion.section>
 
-      {/* SECTION 2: Node Status Cards */}
+      {/* SECTION 2: Chaos Theater — one-click scripted failure + recovery drill */}
+      <motion.section
+        initial={{ opacity: 0, y: 25 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+        className="relative z-10"
+      >
+        <ChaosTheater onRefresh={fetchStatus} />
+      </motion.section>
+
+      {/* SECTION 3: Node Status Cards */}
       <motion.section
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
@@ -361,7 +373,21 @@ export default function AdminDemoPage() {
         />
       </motion.section>
 
-      {/* SECTION 3: Live Terminal Event Log */}
+      {/* SECTION 4: Replica Placement Map — proves N=3 replication visually */}
+      <motion.section
+        initial={{ opacity: 0, y: 25 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
+        className="relative z-10"
+      >
+        <ReplicaMap
+          files={data.files}
+          config={data.config}
+          onRefresh={fetchStatus}
+        />
+      </motion.section>
+
+      {/* SECTION 5: Live Terminal Event Log */}
       <motion.section
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}

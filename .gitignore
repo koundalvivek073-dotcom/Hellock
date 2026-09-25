@@ -24,6 +24,17 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+dev.log
+nodes.log
+
+# Atomic-write temp files from metadataService
+data/metadata.json.tmp.*
+
+# Local verification artefacts (browser QA scripts + screenshots)
+scripts/verify-ui.mjs
+scripts/shot.mjs
+*.png
 
 # Local storage data / mock nodes
 data/nodes/*

@@ -5,6 +5,8 @@ import NodeVisualization from './NodeVisualization';
 import NodeStatusGrid from './NodeStatusGrid';
 import FileList from './FileList';
 import EventLog from './EventLog';
+import ReplicaMap from './ReplicaMap';
+import ChaosTheater from './ChaosTheater';
 import {
   ShieldCheck,
   Upload,
@@ -80,7 +82,11 @@ export default function Dashboard() {
             parsed.type.includes('RECOVER') ||
             parsed.type.includes('UPLOAD_SUCCESS') ||
             parsed.type.includes('CORRUPT') ||
-            parsed.type.includes('INTEGRITY')
+            parsed.type.includes('INTEGRITY') ||
+            parsed.type.includes('CHAOS') ||
+            parsed.type.includes('BIT_ROT') ||
+            parsed.type.includes('QUORUM') ||
+            parsed.type.includes('SIMULATE')
           ) {
             fetchStatus();
           }
@@ -315,7 +321,12 @@ export default function Dashboard() {
         />
       </section>
 
-      {/* SECTION 2: Supporting Node Detail Cards & Failure Controls */}
+      {/* SECTION 2: Chaos Theater — one-click scripted failure + recovery drill */}
+      <section>
+        <ChaosTheater onRefresh={fetchStatus} />
+      </section>
+
+      {/* SECTION 3: Supporting Node Detail Cards & Failure Controls */}
       <section>
         <NodeStatusGrid
           nodes={data.nodes}
@@ -323,7 +334,15 @@ export default function Dashboard() {
         />
       </section>
 
-      {/* SECTION 3: Split Row - File Replicas Table + Real-time Event Log */}
+      {/* SECTION 4: Replica Placement Map — proves N=3 replication visually */}
+      <section>
+        <ReplicaMap
+          files={data.files}
+          config={data.config}
+          onRefresh={fetchStatus}
+        />
+      </section>
+      {/* SECTION 5: Split Row - File Replicas Table + Real-time Event Log */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Replicated Files */}
         <div className="lg:col-span-7">

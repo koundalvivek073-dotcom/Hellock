@@ -1,0 +1,45 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-error.log*
+
+# Next.js build output
+.next
+out
+next-env.d.ts
+
+# Secrets — must NEVER enter the image (inject at runtime with docker run -e)
+.env
+.env.*
+!.env.example
+
+# VCS / CI
+.git
+.gitignore
+.github
+.gitlab-ci.yml
+
+# Editor / OS cruft
+.vscode
+.idea
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs & test output
+*.log
+coverage
+test-results
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Docs & deploy config (not needed at runtime)
+README.md
+LICENSE
+render.yaml
+
+# Local micro-node replica data (recreated by the cluster on boot)
+data/nodes

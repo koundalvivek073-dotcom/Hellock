@@ -1,17 +1,17 @@
 import fs from 'fs';
 import path from 'path';
 import { startAllNodes, NODE_CONFIGS, setNodeFailure, isNodeFailed } from './microNodeServer.js';
+import { resolveNodeUrl } from './nodeTopology.js';
 
 /**
  * ==============================================================================
  * HELLOCK: DISTRIBUTED STORAGE NODE SERVICE (HTTP REST CLUSTER)
  * ==============================================================================
- * Routes cluster physical I/O to 4 independent, isolated HTTP micro-nodes:
- *   - Node A: http://127.0.0.1:4001 (Storage Node A)
- *   - Node B: http://127.0.0.1:4002 (Storage Node B)
- *   - Node C: http://127.0.0.1:4003 (Storage Node C)
- *   - Node D: http://127.0.0.1:4004 (Storage Node D - Standby Failover Target)
- * 
+ * Routes cluster physical I/O to 4 independent, isolated HTTP micro-nodes.
+ * By default they all live on 127.0.0.1 (4001-4004), but every node URL is now
+ * env-configurable — set NODE_A_URL / NODE_HOST / NODE_BIND_HOST to split the
+ * cluster across real machines or containers. See services/nodeTopology.js.
+ *
  * 100% Free, Zero Cloud Setup, No Credit Cards, Completely Offline-Resilient.
  * Provides authentic HTTP REST networking, socket timeouts, and process failure
  * simulation for high-impact hackathon demonstrations.
@@ -29,7 +29,9 @@ if (typeof window === 'undefined') {
 export function getNodeBaseUrl(nodeId) {
   const cfg = NODE_CONFIGS[nodeId];
   if (!cfg) throw new Error(`[STORAGE_ERR] Unknown node ID: "${nodeId}"`);
-  return `http://127.0.0.1:${cfg.port}`;
+  // Prefer the env-resolved advertised URL so remote nodes are reachable;
+  // fall back to the resolved value if a config predates this field.
+  return cfg.url || resolveNodeUrl(nodeId, cfg.port);
 }
 
 export function setSimulatedFailure(nodeId, isFailed) {
