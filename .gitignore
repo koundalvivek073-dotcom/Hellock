@@ -25,7 +25,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 *.log
+*.err
 dev.log
+dev-live.*
 nodes.log
 
 # Atomic-write temp files from metadataService

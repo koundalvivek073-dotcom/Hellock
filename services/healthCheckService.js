@@ -1,23 +1,36 @@
 import cron from 'node-cron';
 import { getAllNodes, updateNodeStatus, getMetadata, updateReplicaStatus } from './metadataService.js';
-import { pingNode, listNodeFiles, readFromNode, uploadToNode } from './nodeStorageService.js';
+import { pingNode, readFromNode, uploadToNode } from './nodeStorageService.js';
 import { recoverFailedNode } from './recoveryService.js';
 import eventBus from './eventBus.js';
-import { calculateHash } from '../lib/hash.js';
+import { isPersistentRuntime } from './runtime.js';
 
 let cronTask = null;
 let isChecking = false;
 
 /**
+ * Guards against concurrent ticks within a single warm instance. On serverless
+ * that is the best we can do locally; the durable node-status state in metadata
+ * still makes the 1-miss/3-miss rules converge across invocations.
+ */
+function alreadyRunning() {
+  if (!isChecking) return false;
+  if (global.__hellockHealthCheck) return true;
+  global.__hellockHealthCheck = true;
+  setTimeout(() => { global.__hellockHealthCheck = false; }, 10000);
+  return true;
+}
+
+/**
  * Pings all nodes, updates health states, and triggers auto-recovery when needed.
- * 
+ *
  * Rules strictly implemented:
  * - Rule 4: Ping every 10s. Mark "suspected" after 1 failure, "confirmed down" after 3 consecutive failures.
  * - Rule 5: Auto-recovery triggered when confirmed down.
  * - Rule 7: When a recovered node comes back online, run version reconciliation / read repair.
  */
 export async function runHealthCheck() {
-  if (isChecking) return;
+  if (alreadyRunning()) return;
   isChecking = true;
 
   try {
@@ -155,9 +168,27 @@ async function reconcileRecoveredNode(nodeId) {
 
 /**
  * Starts the background health check cron job (every 10 seconds).
+ *
+ * This ONLY runs on a long-lived Node process. A serverless function is frozen
+ * between invocations, so a timer registered here would never fire again. On
+ * serverless the same `runHealthCheck()` is instead driven on demand by:
+ *   - GET /api/status  (the admin panel polls this every 10s), and
+ *   - the Netlify scheduled function at netlify.toml `[[scheduled_functions]]`,
+ *     which keeps failover running even when nobody has the site open.
  */
 export function startHealthCheckCron() {
   if (cronTask) return;
+
+  if (!isPersistentRuntime()) {
+    if (!global._vaultCronSkipped) {
+      global._vaultCronSkipped = true;
+      console.log(
+        '[VAULT CRON] Serverless runtime - in-process cron disabled. ' +
+        'Health checks run via /api/status polls and the Netlify scheduled function.'
+      );
+    }
+    return;
+  }
 
   // Run every 10 seconds: "*/10 * * * * *"
   cronTask = cron.schedule('*/10 * * * * *', async () => {
@@ -177,7 +208,7 @@ export function stopHealthCheckCron() {
   }
 }
 
-// Auto-start on module evaluation in Node runtime
+// Auto-start on module evaluation in Node runtime (no-op on serverless)
 if (!global._vaultCronStarted) {
   global._vaultCronStarted = true;
   startHealthCheckCron();

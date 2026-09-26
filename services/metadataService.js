@@ -1,8 +1,6 @@
-import fs from 'fs';
-import path from 'path';
 import { Mutex } from 'async-mutex';
+import { readMetadataRaw, writeMetadataRaw, metaStoreInfo } from './metadataStore.js';
 
-const METADATA_FILE = path.join(process.cwd(), 'data', 'metadata.json');
 const metaMutex = new Mutex();
 
 const DEFAULT_METADATA = {
@@ -52,37 +50,30 @@ const DEFAULT_METADATA = {
   }
 };
 
-function ensureMetadataFile() {
-  const dir = path.dirname(METADATA_FILE);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  if (!fs.existsSync(METADATA_FILE)) {
-    fs.writeFileSync(METADATA_FILE, JSON.stringify(DEFAULT_METADATA, null, 2));
-  }
+/**
+ * Exposes which metadata backend is active, for /api/status and /admin.
+ */
+export function metadataStoreInfo() {
+  return metaStoreInfo();
 }
 
 async function _readRawMetadata() {
-  ensureMetadataFile();
   try {
-    const data = await fs.promises.readFile(METADATA_FILE, 'utf-8');
-    const parsed = JSON.parse(data);
+    const parsed = await readMetadataRaw();
+    if (!parsed) return JSON.parse(JSON.stringify(DEFAULT_METADATA));
     return {
       files: parsed.files || {},
       nodes: { ...DEFAULT_METADATA.nodes, ...(parsed.nodes || {}) },
       stats: { ...DEFAULT_METADATA.stats, ...(parsed.stats || {}) }
     };
   } catch (err) {
-    console.error('[METADATA_ERR] Error reading metadata.json:', err);
+    console.error('[METADATA_ERR] Error reading metadata:', err);
     return JSON.parse(JSON.stringify(DEFAULT_METADATA));
   }
 }
 
 async function _writeRawMetadata(meta) {
-  ensureMetadataFile();
-  const tempFile = `${METADATA_FILE}.tmp.${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
-  await fs.promises.writeFile(tempFile, JSON.stringify(meta, null, 2));
-  await fs.promises.rename(tempFile, METADATA_FILE);
+  await writeMetadataRaw(meta);
   return meta;
 }
 

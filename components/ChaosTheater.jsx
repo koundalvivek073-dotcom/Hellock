@@ -144,11 +144,10 @@ export default function ChaosTheater({ onRefresh }) {
               key={s.key}
               onClick={() => run(s.key)}
               disabled={!!running}
-              className={`group relative text-left p-3 rounded-xl border transition disabled:opacity-40 disabled:cursor-not-allowed ${
-                isRunning
+              className={`group relative text-left p-3 rounded-xl border transition disabled:opacity-40 disabled:cursor-not-allowed ${isRunning
                   ? 'border-rose-500/60 bg-rose-950/30'
                   : 'border-slate-800 bg-slate-950/40 hover:border-slate-600 hover:bg-slate-900/60'
-              }`}
+                }`}
             >
               <div className="flex items-start gap-2.5">
                 <div
@@ -218,9 +217,8 @@ export default function ChaosTheater({ onRefresh }) {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className={`flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-800 font-bold ${
-                      done.ok ? 'text-emerald-400' : 'text-rose-400'
-                    }`}
+                    className={`flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-800 font-bold ${done.ok ? 'text-emerald-400' : 'text-rose-400'
+                      }`}
                   >
                     {done.ok ? (
                       <CheckCircle2 className="w-3.5 h-3.5" />

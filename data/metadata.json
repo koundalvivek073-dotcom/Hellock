@@ -8,27 +8,27 @@
       "hash": "8fbb46cc0cd0c4529d147b4dfddbdf7928769d4c629d6e885b04906b67323261",
       "version": 1,
       "createdAt": "2026-09-25T21:12:48.605Z",
-      "updatedAt": "2026-09-25T22:40:00.523Z",
+      "updatedAt": "2026-09-26T18:28:40.718Z",
       "replicas": {
         "nodeA": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.516Z"
+          "lastVerified": "2026-09-26T18:28:40.685Z"
         },
         "nodeB": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.519Z"
+          "lastVerified": "2026-09-26T18:28:40.701Z"
         },
         "nodeC": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.521Z"
+          "lastVerified": "2026-09-26T18:28:40.709Z"
         },
         "nodeD": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.523Z"
+          "lastVerified": "2026-09-26T18:28:40.718Z"
         }
       }
     },
@@ -40,27 +40,27 @@
       "hash": "fce03f142d6efd83b3f9ace825b370c1bc0682bdc645b2b396f7631c775151e7",
       "version": 1,
       "createdAt": "2026-09-25T21:15:13.769Z",
-      "updatedAt": "2026-09-25T22:40:00.532Z",
+      "updatedAt": "2026-09-26T18:28:40.748Z",
       "replicas": {
         "nodeA": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.526Z"
+          "lastVerified": "2026-09-26T18:28:40.724Z"
         },
         "nodeB": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.528Z"
+          "lastVerified": "2026-09-26T18:28:40.736Z"
         },
         "nodeC": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.530Z"
+          "lastVerified": "2026-09-26T18:28:40.742Z"
         },
         "nodeD": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.532Z"
+          "lastVerified": "2026-09-26T18:28:40.748Z"
         }
       }
     },
@@ -72,22 +72,22 @@
       "hash": "1808216c6544be8b4aa2e56fff19f523cc3fe689474a2b970fd8eec7bf48eadb",
       "version": 1,
       "createdAt": "2026-09-25T21:22:41.311Z",
-      "updatedAt": "2026-09-25T22:40:00.538Z",
+      "updatedAt": "2026-09-26T18:28:40.765Z",
       "replicas": {
         "nodeA": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.534Z"
+          "lastVerified": "2026-09-26T18:28:40.753Z"
         },
         "nodeB": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.536Z"
+          "lastVerified": "2026-09-26T18:28:40.759Z"
         },
         "nodeC": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.538Z"
+          "lastVerified": "2026-09-26T18:28:40.765Z"
         },
         "nodeD": {
           "status": "missing",
@@ -104,22 +104,22 @@
       "hash": "62189381499596a3b8c20fc51568511a0d4ba388be61f259644daf823c2aa528",
       "version": 1,
       "createdAt": "2026-09-25T21:22:46.556Z",
-      "updatedAt": "2026-09-25T22:40:00.542Z",
+      "updatedAt": "2026-09-26T18:28:40.781Z",
       "replicas": {
         "nodeA": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.539Z"
+          "lastVerified": "2026-09-26T18:28:40.769Z"
         },
         "nodeB": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.541Z"
+          "lastVerified": "2026-09-26T18:28:40.775Z"
         },
         "nodeC": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.542Z"
+          "lastVerified": "2026-09-26T18:28:40.781Z"
         },
         "nodeD": {
           "status": "missing",
@@ -136,22 +136,22 @@
       "hash": "a3e759ea2e066e0c221375557e3245fcc47a2d09cd85e6aedc23710b2a33a9b5",
       "version": 1,
       "createdAt": "2026-09-25T21:23:18.100Z",
-      "updatedAt": "2026-09-25T22:40:00.713Z",
+      "updatedAt": "2026-09-26T18:28:40.795Z",
       "replicas": {
         "nodeA": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.598Z"
+          "lastVerified": "2026-09-26T18:28:40.785Z"
         },
         "nodeB": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.658Z"
+          "lastVerified": "2026-09-26T18:28:40.790Z"
         },
         "nodeC": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.713Z"
+          "lastVerified": "2026-09-26T18:28:40.795Z"
         },
         "nodeD": {
           "status": "missing",
@@ -173,27 +173,27 @@
         "bob.dev@gmail.com"
       ],
       "createdAt": "2026-09-25T21:34:18.848Z",
-      "updatedAt": "2026-09-25T22:40:00.720Z",
+      "updatedAt": "2026-09-26T18:28:40.817Z",
       "replicas": {
         "nodeA": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.716Z"
+          "lastVerified": "2026-09-26T18:28:40.799Z"
         },
         "nodeB": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.717Z"
+          "lastVerified": "2026-09-26T18:28:40.805Z"
         },
         "nodeC": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.719Z"
+          "lastVerified": "2026-09-26T18:28:40.811Z"
         },
         "nodeD": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.720Z"
+          "lastVerified": "2026-09-26T18:28:40.817Z"
         }
       }
     },
@@ -208,22 +208,22 @@
       "ownerName": "Alice (Owner)",
       "authorizedAccounts": [],
       "createdAt": "2026-09-25T21:50:20.430Z",
-      "updatedAt": "2026-09-25T22:40:00.869Z",
+      "updatedAt": "2026-09-26T18:28:40.831Z",
       "replicas": {
         "nodeA": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.774Z"
+          "lastVerified": "2026-09-26T18:28:40.820Z"
         },
         "nodeB": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.825Z"
+          "lastVerified": "2026-09-26T18:28:40.826Z"
         },
         "nodeC": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.869Z"
+          "lastVerified": "2026-09-26T18:28:40.831Z"
         },
         "nodeD": {
           "status": "missing",
@@ -243,22 +243,22 @@
       "ownerName": "Bob (Collaborator)",
       "authorizedAccounts": [],
       "createdAt": "2026-09-25T21:51:53.198Z",
-      "updatedAt": "2026-09-25T22:40:00.879Z",
+      "updatedAt": "2026-09-26T18:28:40.846Z",
       "replicas": {
         "nodeA": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.872Z"
+          "lastVerified": "2026-09-26T18:28:40.835Z"
         },
         "nodeB": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.877Z"
+          "lastVerified": "2026-09-26T18:28:40.840Z"
         },
         "nodeC": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.879Z"
+          "lastVerified": "2026-09-26T18:28:40.846Z"
         },
         "nodeD": {
           "status": "missing",
@@ -278,22 +278,22 @@
       "ownerName": "Demo Engineer",
       "authorizedAccounts": [],
       "createdAt": "2026-09-25T22:02:54.846Z",
-      "updatedAt": "2026-09-25T22:40:00.883Z",
+      "updatedAt": "2026-09-26T18:28:40.861Z",
       "replicas": {
         "nodeA": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.880Z"
+          "lastVerified": "2026-09-26T18:28:40.851Z"
         },
         "nodeB": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.882Z"
+          "lastVerified": "2026-09-26T18:28:40.856Z"
         },
         "nodeC": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.883Z"
+          "lastVerified": "2026-09-26T18:28:40.861Z"
         },
         "nodeD": {
           "status": "missing",
@@ -313,27 +313,27 @@
       "ownerName": "Demo Engineer",
       "authorizedAccounts": [],
       "createdAt": "2026-09-25T22:03:49.997Z",
-      "updatedAt": "2026-09-25T22:40:00.888Z",
+      "updatedAt": "2026-09-26T18:28:40.882Z",
       "replicas": {
         "nodeA": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.884Z"
+          "lastVerified": "2026-09-26T18:28:40.865Z"
         },
         "nodeB": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.885Z"
+          "lastVerified": "2026-09-26T18:28:40.871Z"
         },
         "nodeC": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.887Z"
+          "lastVerified": "2026-09-26T18:28:40.877Z"
         },
         "nodeD": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.888Z"
+          "lastVerified": "2026-09-26T18:28:40.882Z"
         }
       }
     },
@@ -383,27 +383,27 @@
       "ownerName": "Demo Engineer",
       "authorizedAccounts": [],
       "createdAt": "2026-09-25T22:21:07.323Z",
-      "updatedAt": "2026-09-25T22:40:00.892Z",
+      "updatedAt": "2026-09-26T18:28:40.908Z",
       "replicas": {
         "nodeA": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.889Z"
+          "lastVerified": "2026-09-26T18:28:40.887Z"
         },
         "nodeB": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.890Z"
+          "lastVerified": "2026-09-26T18:28:40.898Z"
         },
         "nodeC": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.891Z"
+          "lastVerified": "2026-09-26T18:28:40.903Z"
         },
         "nodeD": {
-          "status": "synced",
+          "status": "missing",
           "version": 1,
-          "lastVerified": "2026-09-25T22:40:00.892Z"
+          "lastVerified": "2026-09-26T18:28:40.908Z"
         }
       }
     },
@@ -418,22 +418,155 @@
       "ownerName": "Bob (Collaborator)",
       "authorizedAccounts": [],
       "createdAt": "2026-09-25T22:45:08.083Z",
-      "updatedAt": "2026-09-25T22:45:08.091Z",
+      "updatedAt": "2026-09-26T18:28:40.922Z",
+      "replicas": {
+        "nodeA": {
+          "status": "missing",
+          "version": 1,
+          "lastVerified": "2026-09-26T18:28:40.912Z"
+        },
+        "nodeB": {
+          "status": "missing",
+          "version": 1,
+          "lastVerified": "2026-09-26T18:28:40.918Z"
+        },
+        "nodeC": {
+          "status": "missing",
+          "version": 1,
+          "lastVerified": "2026-09-26T18:28:40.922Z"
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "smoke-1790442851083": {
+      "fileId": "smoke-1790442851083",
+      "filename": "smoke.txt",
+      "size": 38,
+      "mimeType": "application/octet-stream",
+      "version": 1,
+      "owner": "smoke@test.local",
+      "ownerName": "Vault User",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-26T17:14:11.232Z",
+      "updatedAt": "2026-09-26T18:28:40.927Z",
+      "replicas": {
+        "nodeA": {
+          "status": "missing",
+          "version": 1,
+          "lastVerified": "2026-09-26T18:28:40.927Z"
+        },
+        "nodeB": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        },
+        "nodeC": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "smoke-1790442907135": {
+      "fileId": "smoke-1790442907135",
+      "filename": "smoke.txt",
+      "size": 38,
+      "mimeType": "application/octet-stream",
+      "version": 1,
+      "owner": "smoke@test.local",
+      "ownerName": "Vault User",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-26T17:15:07.280Z",
+      "updatedAt": "2026-09-26T17:15:07.280Z",
       "replicas": {
         "nodeA": {
           "status": "synced",
-          "version": 1,
-          "lastVerified": "2026-09-25T22:45:08.090Z"
+          "version": 1
         },
         "nodeB": {
-          "status": "synced",
-          "version": 1,
-          "lastVerified": "2026-09-25T22:45:08.091Z"
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
         },
         "nodeC": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "smoke-1790442916874": {
+      "fileId": "smoke-1790442916874",
+      "filename": "smoke.txt",
+      "size": 38,
+      "mimeType": "application/octet-stream",
+      "version": 1,
+      "owner": "smoke@test.local",
+      "ownerName": "Vault User",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-26T17:15:17.027Z",
+      "updatedAt": "2026-09-26T17:15:17.027Z",
+      "replicas": {
+        "nodeA": {
           "status": "synced",
-          "version": 1,
-          "lastVerified": "2026-09-25T22:45:08.090Z"
+          "version": 1
+        },
+        "nodeB": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        },
+        "nodeC": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "smoke-1790443194637": {
+      "fileId": "smoke-1790443194637",
+      "filename": "smoke.txt",
+      "size": 38,
+      "mimeType": "application/octet-stream",
+      "version": 1,
+      "owner": "smoke@test.local",
+      "ownerName": "Vault User",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-26T17:19:54.757Z",
+      "updatedAt": "2026-09-26T17:19:54.757Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1
+        },
+        "nodeB": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        },
+        "nodeC": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
         },
         "nodeD": {
           "status": "missing",
@@ -450,7 +583,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-25T23:51:00.457Z",
+      "lastPing": "2026-09-26T18:31:10.622Z",
       "simulatedFailure": false
     },
     "nodeB": {
@@ -459,7 +592,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-25T23:51:00.461Z",
+      "lastPing": "2026-09-26T18:31:10.632Z",
       "simulatedFailure": false
     },
     "nodeC": {
@@ -468,7 +601,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-25T23:51:00.465Z",
+      "lastPing": "2026-09-26T18:31:10.637Z",
       "simulatedFailure": false
     },
     "nodeD": {
@@ -477,7 +610,7 @@
       "role": "standby",
       "status": "standby",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-25T23:51:00.469Z",
+      "lastPing": "2026-09-26T18:31:10.640Z",
       "simulatedFailure": false
     }
   },

@@ -1,5 +1,5 @@
 # ==============================================================================
-# NETLIFY DEPLOYMENT — Hellock Distributed Object Storage
+# NETLIFY DEPLOYMENT - Hellock Distributed Object Storage
 # ==============================================================================
 # Root cause of the previous 404: Netlify defaults to a STATIC deploy
 # (publish = "out"). Hellock is a Next.js 14 SSR app and has no `out/`
@@ -11,31 +11,79 @@
 # ==============================================================================
 
 [build]
-    command = "npm run build"
+  # IMPORTANT: this repo has a nested layout. The git root is the parent folder
+  # and the Next.js app lives in `Hellock/`. If the Netlify UI base directory is
+  # left empty, this line makes the build run in the right place.
+  base = "Hellock"
+  command = "npm run build"
   # NOTE: `publish` is intentionally omitted. @netlify/plugin-nextjs sets the
   # publish directory and Functions routing itself; declaring it here forces a
   # static deploy and reintroduces the 404.
   [build.environment]
-  NODE_VERSION = "20"
-  NEXT_TELEMETRY_DISABLED = "1"
-  # Netlify functions are stateless; the micro-node cluster binds to localhost.
-  NODE_BIND_HOST = "127.0.0.1"
+    NODE_VERSION = "20"
+    NEXT_TELEMETRY_DISABLED = "1"
+
+    # --- Runtime mode -------------------------------------------------------
+    # A Netlify Function is a short-lived, stateless invocation. The app detects
+    # this automatically (NETLIFY=true is injected by the runtime); this is set
+    # explicitly too so local `netlify dev` behaves identically. As a result:
+    #   * the in-process TCP micro-node listeners on ports 4001-4004 are NOT
+    #     started - nothing outside a single function invocation can reach them,
+    #     and holding the sockets open only delays the freeze.
+    #     See services/runtime.js and services/microNodeServer.js.
+    #   * nodeStorageService transparently routes node I/O through the SAME
+    #     request handlers in-process instead of over a socket: same routes,
+    #     same payloads, no wire.
+    #   * the node-cron 10s loop is NOT registered. Instead /api/status runs a
+    #     tick inline on every poll, and `[[scheduled_functions]]` below keeps
+    #     failover running when nobody has the site open.
+    HELLOCK_SERVERLESS = "true"
+
+    # --- Durable storage ----------------------------------------------------
+    # File bytes and cluster metadata both need a durable backend on Netlify:
+    # the function bundle's filesystem is read-only and wiped on every cold
+    # start. With @netlify/blobs installed (see package.json) the app
+    # automatically persists:
+    #   * one blob store per storage node  (hellock-node-nodeA .. nodeD)
+    #   * one metadata blob                (hellock-metadata)
+    # @netlify/blobs needs no credentials in production: the Netlify runtime
+    # injects a site-scoped token automatically.
+    #
+    # If @netlify/blobs is unavailable the app falls back to an in-memory store
+    # so the site still loads and demos, but /api/status will report
+    # runtime.metadata.durable = false and data will not survive a cold start.
 
 # Next.js Server-Side Rendering + API routes
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# The 4 micro storage nodes run in-process via the SSR runtime.
-# They are NOT separate exposed ports on Netlify — NODE_*_URL in
-# services/nodeTopology.js must point back at the same site origin.
 [functions]
   node_bundler = "esbuild"
+
+# ==============================================================================
+# SCHEDULED HEALTH CHECK (replaces the in-process node-cron loop)
+# ==============================================================================
+# Netlify's minimum scheduled-function cadence is once per minute, and the free
+# plan meters monthly invocations (check your Netlify billing settings). This
+# runs the identical detection / SUSPECTED / CONFIRMED_DOWN / auto-recovery /
+# read-repair logic that `npm run dev` runs every 10 seconds on a persistent
+# host.
+#
+# For continuous 10-second health checking with full 1-miss/3-miss demo
+# fidelity, deploy to a persistent host instead (Render, Railway, Fly.io,
+# Docker, or a VPS) - see README "Publishing & Deployment Guide".
+[[scheduled_functions]]
+  schedule = "* * * * *"   # every minute
+  function = "/api/health-tick"
 
 # NOTE: deliberately NO catch-all "/*" -> "/index" redirect.
 # Next.js owns routing on Netlify; a catch-all redirect bypasses the SSR
 # handler and breaks server-rendered routes, which caused the 404s in the
 # first place. Static assets only need a 404 passthrough to the SSR handler.
 
+# The 4001-4004 -> /api/:splat alias is retained for parity with the
+# persistent-host topology, but it is inert on Netlify: the in-process
+# transport means no request ever leaves the function to reach those ports.
 [[redirects]]
   from = "/api/nodes/*"
   to = "/api/:splat"

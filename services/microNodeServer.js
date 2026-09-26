@@ -1,7 +1,7 @@
 import http from 'http';
-import fs from 'fs';
-import path from 'path';
 import { getNodeTopology, resolveNodeUrl, isDistributedDeployment } from './nodeTopology.js';
+import { microNodesEnabled, isPersistentRuntime } from './runtime.js';
+import { putBlob, getBlob, deleteBlob, listBlobs, blobUsage } from './blobStore.js';
 
 /**
  * ==============================================================================
@@ -20,6 +20,16 @@ import { getNodeTopology, resolveNodeUrl, isDistributedDeployment } from './node
  *
  * The bind address and advertised URL are now env-configurable, so this same
  * cluster can be split across 4 real machines / containers. See nodeTopology.js.
+ *
+ * IMPORTANT (serverless): the TCP listeners below are ONLY started on a
+ * long-lived Node process. On Netlify/Vercel a function invocation cannot bind
+ * an auxiliary port and be reached over it, so `startAllNodes()` is a no-op
+ * there and the same handlers run in-process instead. See nodeStorageService.js,
+ * which picks the transport at call time. The request handler is shared by both
+ * paths, so behaviour and payload shapes are identical either way.
+ *
+ * All byte I/O is delegated to services/blobStore.js, which persists to disk on
+ * a persistent host and to Netlify Blobs on serverless.
  * ==============================================================================
  */
 
@@ -39,7 +49,7 @@ for (const [id, cfg] of Object.entries(NODE_CONFIGS)) {
   cfg.external = isDistributedDeployment();
 }
 
-export const BASE_NODES_DIR = path.join(process.cwd(), 'data', 'nodes');
+export const BASE_NODES_DIR = 'blobstore';
 
 // In-memory simulation states per node
 const nodeStates = {
@@ -64,13 +74,17 @@ export function isNodeFailed(nodeId) {
  * @param {string} nodeId - 'nodeA' | 'nodeB' | 'nodeC' | 'nodeD'
  * @param {number} port - Network port
  */
-export function createNodeServer(nodeId, port) {
-  const nodeDir = path.join(BASE_NODES_DIR, nodeId);
-  if (!fs.existsSync(nodeDir)) {
-    fs.mkdirSync(nodeDir, { recursive: true });
-  }
-
-  const server = http.createServer(async (req, res) => {
+/**
+ * The bare request handler for a node, shared by the TCP server and the
+ * in-process (serverless) transport. Kept separate from createNodeServer so
+ * nodeStorageService can invoke a node directly without opening a socket.
+ *
+ * @param {string} nodeId
+ * @param {number} port
+ * @returns {(req: import('http').IncomingMessage, res: import('http').ServerResponse) => Promise<void>}
+ */
+export function createNodeRequestHandler(nodeId, port) {
+  return async function handleNodeRequest(req, res) {
     // Set standard CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
@@ -99,13 +113,13 @@ export function createNodeServer(nodeId, port) {
     try {
       // 1. Health Ping: GET /ping or GET /health
       if (req.method === 'GET' && (pathname === '/ping' || pathname === '/health')) {
-        const files = await fs.promises.readdir(nodeDir);
+        const usage = await blobUsage(nodeId);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           status: 'healthy',
           nodeId,
           port,
-          fileCount: files.filter(f => !f.startsWith('.')).length,
+          fileCount: usage.files,
           timestamp: new Date().toISOString()
         }));
         return;
@@ -119,8 +133,7 @@ export function createNodeServer(nodeId, port) {
           chunks.push(chunk);
         }
         const buffer = Buffer.concat(chunks);
-        const filePath = path.join(nodeDir, fileId);
-        await fs.promises.writeFile(filePath, buffer);
+        await putBlob(nodeId, fileId, buffer);
 
         res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -136,15 +149,14 @@ export function createNodeServer(nodeId, port) {
       // 3. Download: GET /download/:fileId
       if (req.method === 'GET' && pathname.startsWith('/download/')) {
         const fileId = decodeURIComponent(pathname.replace('/download/', ''));
-        const filePath = path.join(nodeDir, fileId);
+        const data = await getBlob(nodeId, fileId);
 
-        if (!fs.existsSync(filePath)) {
+        if (!data) {
           res.writeHead(404, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: `File not found on ${nodeId}`, fileId }));
           return;
         }
 
-        const data = await fs.promises.readFile(filePath);
         res.writeHead(200, {
           'Content-Type': 'application/octet-stream',
           'Content-Length': data.length
@@ -156,10 +168,7 @@ export function createNodeServer(nodeId, port) {
       // 4. Delete: DELETE /delete/:fileId
       if (req.method === 'DELETE' && pathname.startsWith('/delete/')) {
         const fileId = decodeURIComponent(pathname.replace('/delete/', ''));
-        const filePath = path.join(nodeDir, fileId);
-        if (fs.existsSync(filePath)) {
-          await fs.promises.unlink(filePath);
-        }
+        await deleteBlob(nodeId, fileId);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: true, nodeId, fileId }));
         return;
@@ -167,30 +176,29 @@ export function createNodeServer(nodeId, port) {
 
       // 5. List Files: GET /files
       if (req.method === 'GET' && pathname === '/files') {
-        const files = await fs.promises.readdir(nodeDir);
-        const validFiles = files.filter(f => !f.startsWith('.'));
+        const validFiles = await listBlobs(nodeId);
+        const usage = await blobUsage(nodeId);
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ nodeId, files: validFiles }));
+        res.end(JSON.stringify({ nodeId, files: validFiles, bytes: usage.bytes }));
         return;
       }
 
       // 6. Corrupt Replica: POST /corrupt/:fileId
       if (req.method === 'POST' && pathname.startsWith('/corrupt/')) {
         const fileId = decodeURIComponent(pathname.replace('/corrupt/', ''));
-        const filePath = path.join(nodeDir, fileId);
+        const data = await getBlob(nodeId, fileId);
 
-        if (!fs.existsSync(filePath)) {
+        if (!data) {
           res.writeHead(404, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: `File ${fileId} not found on ${nodeId}` }));
           return;
         }
 
-        const data = await fs.promises.readFile(filePath);
         const corrupted = Buffer.from(data);
         if (corrupted.length > 0) {
           corrupted[0] = corrupted[0] ^ 0xFF; // Invert first byte
         }
-        await fs.promises.writeFile(filePath, corrupted);
+        await putBlob(nodeId, fileId, corrupted);
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: true, nodeId, fileId, corrupted: true }));
@@ -225,9 +233,15 @@ export function createNodeServer(nodeId, port) {
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: err.message }));
     }
-  });
+  };
+}
 
-  return server;
+/**
+ * Wraps a node's request handler in a real HTTP server bound to `port`.
+ * Only called on a persistent runtime; see startAllNodes().
+ */
+export function createNodeServer(nodeId, port) {
+  return http.createServer(createNodeRequestHandler(nodeId, port));
 }
 
 /**
@@ -238,10 +252,25 @@ export function createNodeServer(nodeId, port) {
  * which is the local single-process dev mode.
  */
 export async function startAllNodes() {
+  // On serverless we must NOT bind ports: nothing outside the function can
+  // reach 4001-4004, and holding the listeners open only delays the freeze.
+  // The in-process transport in nodeStorageService.js serves the same routes.
+  if (!microNodesEnabled()) {
+    if (!global._hellockMicroNodesSkipped) {
+      global._hellockMicroNodesSkipped = true;
+      console.log(
+        '[NODE_CLUSTER] Serverless runtime detected - TCP micro-node listeners disabled. ' +
+        'Using the in-process node transport instead.'
+      );
+    }
+    return;
+  }
+
   if (global._hellockMicroNodesStarted) {
     return;
   }
   global._hellockMicroNodesStarted = true;
+  global._hellockMicroNodesSkipped = false;
   global._hellockMicroNodes = global._hellockMicroNodes || {};
 
   const onlyId = (process.env.NODE_ID || '').trim();
@@ -287,4 +316,12 @@ export async function stopAllNodes() {
     global._hellockMicroNodes = {};
   }
   global._hellockMicroNodesStarted = false;
+}
+
+/**
+ * True when the TCP micro-node cluster is actually listening. The admin panel
+ * uses this to label the topology correctly on serverless.
+ */
+export function microNodesListening() {
+  return Boolean(global._hellockMicroNodesStarted && !global._hellockMicroNodesSkipped);
 }

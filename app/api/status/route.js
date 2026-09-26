@@ -1,36 +1,39 @@
 import { NextResponse } from 'next/server';
-import { getMetadata } from '@/services/metadataService';
+import { getMetadata, metadataStoreInfo } from '@/services/metadataService';
+import { storageRuntimeInfo, getNodeUsage } from '@/services/nodeStorageService';
+import { runHealthCheck } from '@/services/healthCheckService';
+import { isServerless, runtimeLabel } from '@/services/runtime';
 import eventBus from '@/services/eventBus';
-import fs from 'fs';
-import path from 'path';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    // On serverless there is no background cron, so the admin panel's own
+    // 10s poll is what drives detection, suspension, and auto-recovery.
+    // On a persistent host the cron already handles this and this is a no-op
+    // fast path (the in-process re-entrancy guard short-circuits it).
+    if (isServerless()) {
+      await runHealthCheck();
+    }
+
     const meta = await getMetadata();
     const filesArray = Object.values(meta.files || {});
 
-    // Compute actual per-node file counts & disk storage
+    // Compute actual per-node file counts & stored bytes from the active
+    // blob store (disk on a persistent host, Netlify Blobs on serverless).
     const nodeMetrics = {};
-    const baseDir = path.join(process.cwd(), 'data', 'nodes');
 
     for (const [nodeId, node] of Object.entries(meta.nodes)) {
-      const nodeDir = path.join(baseDir, nodeId);
       let diskBytes = 0;
       let diskFiles = 0;
 
-      if (fs.existsSync(nodeDir)) {
-        try {
-          const files = fs.readdirSync(nodeDir).filter(f => !f.startsWith('.'));
-          diskFiles = files.length;
-          for (const f of files) {
-            const stat = fs.statSync(path.join(nodeDir, f));
-            diskBytes += stat.size;
-          }
-        } catch (e) {
-          // ignore directory read error
-        }
+      try {
+        const usage = await getNodeUsage(nodeId);
+        diskFiles = usage?.files || 0;
+        diskBytes = usage?.bytes || 0;
+      } catch (e) {
+        // ignore usage read error; metrics degrade to zero rather than 500ing
       }
 
       nodeMetrics[nodeId] = {
@@ -46,6 +49,11 @@ export async function GET() {
       files: filesArray,
       stats: meta.stats,
       recentEvents: eventBus.getHistory().slice(0, 50),
+      runtime: {
+        mode: runtimeLabel(),
+        storage: storageRuntimeInfo(),
+        metadata: metadataStoreInfo()
+      },
       config: {
         replicationFactor: parseInt(process.env.REPLICATION_FACTOR || '3', 10),
         writeQuorum: parseInt(process.env.WRITE_QUORUM || '2', 10),
