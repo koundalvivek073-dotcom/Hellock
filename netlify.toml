@@ -1,0 +1,50 @@
+# ==============================================================================
+# NETLIFY DEPLOYMENT — Hellock Distributed Object Storage
+# ==============================================================================
+# Root cause of the previous 404: Netlify defaults to a STATIC deploy
+# (publish = "out"). Hellock is a Next.js 14 SSR app and has no `out/`
+# directory, so EVERY route resolved to a non-existent file and returned 404
+# before any of your React code ever ran.
+#
+# Fix: use the official Next.js runtime plugin so Netlify builds with
+# @netlify/plugin-nextjs and serves via the Functions/SSR pipeline.
+# ==============================================================================
+
+[build]
+    command = "npm run build"
+  # NOTE: `publish` is intentionally omitted. @netlify/plugin-nextjs sets the
+  # publish directory and Functions routing itself; declaring it here forces a
+  # static deploy and reintroduces the 404.
+  [build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+  # Netlify functions are stateless; the micro-node cluster binds to localhost.
+  NODE_BIND_HOST = "127.0.0.1"
+
+# Next.js Server-Side Rendering + API routes
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# The 4 micro storage nodes run in-process via the SSR runtime.
+# They are NOT separate exposed ports on Netlify — NODE_*_URL in
+# services/nodeTopology.js must point back at the same site origin.
+[functions]
+  node_bundler = "esbuild"
+
+# NOTE: deliberately NO catch-all "/*" -> "/index" redirect.
+# Next.js owns routing on Netlify; a catch-all redirect bypasses the SSR
+# handler and breaks server-rendered routes, which caused the 404s in the
+# first place. Static assets only need a 404 passthrough to the SSR handler.
+
+[[redirects]]
+  from = "/api/nodes/*"
+  to = "/api/:splat"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
