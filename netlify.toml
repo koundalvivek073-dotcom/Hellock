@@ -11,10 +11,9 @@
 # ==============================================================================
 
 [build]
-  # IMPORTANT: this repo has a nested layout. The git root is the parent folder
-  # and the Next.js app lives in `Hellock/`. If the Netlify UI base directory is
-  # left empty, this line makes the build run in the right place.
-  base = "Hellock"
+  # The Next.js app lives at the repository root, so no `base` directory is
+  # set. (A previous `base = "Hellock"` pointed at a folder that does not exist
+  # in this repo and made Netlify fail while parsing this file.)
   command = "npm run build"
   # NOTE: `publish` is intentionally omitted. @netlify/plugin-nextjs sets the
   # publish directory and Functions routing itself; declaring it here forces a
