@@ -31,9 +31,16 @@ const WRITE_QUORUM = parseInt(process.env.WRITE_QUORUM || '2', 10);
  * @param {string} [params.fileId]
  * @returns {Promise<object>} Upload confirmation result
  */
-export async function uploadFile({ filename, buffer, mimeType = 'application/octet-stream', fileId, owner = 'demo@vault.local', ownerName = 'Vault User' }) {
+export async function uploadFile({ filename, buffer, mimeType = 'application/octet-stream', fileId, owner = 'demo@hellock.local', ownerName = 'Hellock User' }) {
   if (!buffer || buffer.length === 0) {
     throw new Error('Upload buffer cannot be empty.');
+  }
+
+  // Maximum buffer guardrail to prevent RAM exhaustion and serverless timeout crashes
+  const MAX_UPLOAD_SIZE = parseInt(process.env.MAX_UPLOAD_SIZE_BYTES || `${50 * 1024 * 1024}`, 10);
+  if (buffer.length > MAX_UPLOAD_SIZE) {
+    const maxMb = Math.round(MAX_UPLOAD_SIZE / (1024 * 1024));
+    throw new Error(`Upload payload (${(buffer.length / (1024 * 1024)).toFixed(1)}MB) exceeds maximum allowable cluster buffer size of ${maxMb}MB.`);
   }
 
   // Derive stable or random file ID
@@ -44,6 +51,19 @@ export async function uploadFile({ filename, buffer, mimeType = 'application/oct
     const startTime = Date.now();
     const hash = calculateHash(buffer);
 
+    // Rule 11: 2MB block/chunk partitioning for fine-grained integrity verification
+    const CHUNK_SIZE = 2 * 1024 * 1024;
+    const chunks = [];
+    for (let offset = 0; offset < buffer.length; offset += CHUNK_SIZE) {
+      const slice = buffer.subarray(offset, Math.min(offset + CHUNK_SIZE, buffer.length));
+      chunks.push({
+        chunkIndex: chunks.length,
+        offset,
+        size: slice.length,
+        hash: calculateHash(slice)
+      });
+    }
+
     // Check existing metadata for versioning (Rule 7)
     const existing = await getFileMetadata(effectiveFileId);
     const newVersion = existing ? (existing.version || 1) + 1 : 1;
@@ -52,13 +72,14 @@ export async function uploadFile({ filename, buffer, mimeType = 'application/oct
     const targetNodeIds = await getBestUploadNodes(REPLICATION_FACTOR);
 
     eventBus.emitEvent('UPLOAD_START', {
-      message: `Initiating upload for "${filename}" (v${newVersion}) by ${owner} across [${targetNodeIds.join(', ')}] with quorum W=${WRITE_QUORUM}`,
+      message: `Initiating upload for "${filename}" (v${newVersion}) by ${owner} across [${targetNodeIds.join(', ')}] with quorum W=${WRITE_QUORUM} (${chunks.length} block chunks)`,
       fileId: effectiveFileId,
       filename,
       owner,
       version: newVersion,
       hash: hash.substring(0, 12) + '...',
       size: buffer.length,
+      chunks: chunks.length,
       targetNodes: targetNodeIds
     });
 
@@ -78,6 +99,9 @@ export async function uploadFile({ filename, buffer, mimeType = 'application/oct
       version: newVersion,
       owner,
       ownerName,
+      chunks,
+      chunkCount: chunks.length,
+      chunkSize: CHUNK_SIZE,
       replicas: initialReplicas
     });
 

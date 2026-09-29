@@ -1,8 +1,8 @@
-# 🛡️ Vault: Fault-Tolerant Distributed Object Storage
+# 🛡️ Hellock: Fault-Tolerant Distributed Object Storage
 
-**Vault** is an AI-first, fault-tolerant distributed object storage system built for high-availability demonstrations. It showcases how modern distributed storage engines (modeled after Ceph, Cassandra, and Google Cloud Storage) handle hardware failures, network partitions, and silent bit rot without downtime or data loss.
+**Hellock** is an AI-first, fault-tolerant distributed object storage system built for high-availability demonstrations. It showcases how modern distributed storage engines (modeled after Ceph, Cassandra, and Google Cloud Storage) handle hardware failures, network partitions, and silent bit rot without downtime or data loss.
 
-Regular users enjoy an effortless, consumer-grade file storage experience (upload, view, and share via Google accounts). A separate, unlinked internal/admin panel (`/admin`) gives hackathon judges direct visibility into the cluster internals, 3D replica state, consensus logs, and live fault injection tools.
+Regular users enjoy an effortless, consumer-grade file storage experience (upload, view, and share via Google or Phone OTP accounts). A separate, unlinked internal/admin panel (`/admin`) gives hackathon judges direct visibility into the cluster internals, 3D replica state, consensus logs, and live fault injection tools.
 
 ---
 
@@ -11,10 +11,10 @@ Regular users enjoy an effortless, consumer-grade file storage experience (uploa
 1. **Dual-Surface Product Experience**:
    - **`/dashboard` (Consumer Experience)**: Clean, polished Dropbox/Linear-style interface with zero distributed-systems jargon. Users see only their files, a glowing drag-and-drop `UploadZone`, and a `ShareModal`.
    - **`/admin` (Internal Demo Panel)**: 3D interactive cluster topology with real-time health indicator lights, animated failover transfer beams, and terminal consensus event logs.
-2. **Google OAuth & File Sharing**:
-   - Users authenticate with their Google account via NextAuth.js.
-   - Files are owned by the uploader's Google account.
-   - Owners can grant access to any Google email (`authorizedAccounts`). Shared files appear in the recipient's dashboard labeled with `Shared by [Owner]`.
+2. **Google OAuth & Phone OTP File Sharing**:
+   - Users authenticate with their Google account or Phone OTP backed by Node E Firestore.
+   - Files are owned by the uploader's account.
+   - Owners can grant access to any Google email or Phone number (`authorizedAccounts`). Shared files appear in the recipient's dashboard labeled with `Shared by [Owner]`.
 3. **Triple Replication ($N=3$)**: On upload, files are partitioned and written in parallel to 3 independent storage nodes (`nodeA`, `nodeB`, `nodeC`).
 4. **Durability Write Quorum ($W=2$)**: Writes are acknowledged as successful as soon as **2 of 3** nodes confirm physical persistence. The 3rd write completes asynchronously in the background.
 5. **Per-File Concurrency Locking**: Serializes concurrent modifications using `async-mutex` per file ID, preventing race conditions or split-brain versions.
@@ -24,13 +24,13 @@ Regular users enjoy an effortless, consumer-grade file storage experience (uploa
    - **3 consecutive missed pings** $\rightarrow$ Marked `CONFIRMED DOWN` (solid red) and triggers auto-recovery.
 7. **Standby Failover & Auto-Healing**:
    - Standby Node (`nodeD`) remains idle (white/dim) during normal cluster operation.
-   - When a node fails, Vault scans metadata, streams surviving replicas from healthy nodes to `nodeD`, and transitions `nodeD` to active green with an animated data transfer beam.
+   - When a node fails, Hellock scans metadata, streams surviving replicas from healthy nodes to `nodeD`, and transitions `nodeD` to active green with an animated data transfer beam.
 8. **Cryptographic Integrity & Bit-Rot Scrubbing**:
    - Computes master SHA-256 signatures on ingest.
-   - Background scrub re-hashes physical disk blocks. If bytes are altered (simulated bit rot), Vault detects the mismatch and auto-heals the corrupted replica using a surviving healthy node.
+   - Background scrub re-hashes physical disk blocks. If bytes are altered (simulated bit rot), Hellock detects the mismatch and auto-heals the corrupted replica using a surviving healthy node.
 9. **Read-Repair & Version Reconciliation**:
    - Each file tracks monotonically increasing versions (`v1`, `v2`, ...).
-   - When a recovered node rejoins the cluster with outdated replicas, Vault upgrades it in place without allocating redundant storage.
+   - When a recovered node rejoins the cluster with outdated replicas, Hellock upgrades it in place without allocating redundant storage.
 10. **Zero-Cost 4-Node HTTP Microservice Cluster Architecture**:
     - Physical I/O is routed over **real HTTP REST network sockets** across 4 independent local micro-nodes:
       - **Node A**: `http://127.0.0.1:4001` (Primary Storage 1)
@@ -49,7 +49,7 @@ Regular users enjoy an effortless, consumer-grade file storage experience (uploa
 ### 1. Installation
 
 ```bash
-cd /Users/deep/.gemini/antigravity/scratch/vault
+cd /Users/deep/.gemini/antigravity/scratch/hellock
 npm install
 ```
 
@@ -64,7 +64,7 @@ STANDBY_NODE=nodeD
 
 # NextAuth
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=vault_hackathon_demo_secret_2026_xyz
+NEXTAUTH_SECRET=hellock_hackathon_demo_secret_2026_xyz
 
 # Google OAuth (Optional for local testing; demo personas work out-of-the-box!)
 GOOGLE_CLIENT_ID=
@@ -118,14 +118,14 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 6. **Bit-Rot Self-Healing**:
    - Click **"Simulate Bit Rot on Node"** to flip raw disk bytes.
    - Click **"Check Integrity"**.
-   - Vault logs `[CORRUPTION_DETECTED]` and repairs the damaged block automatically from a surviving replica!
+   - Hellock logs `[CORRUPTION_DETECTED]` and repairs the damaged block automatically from a surviving replica!
 
 ---
 
 ## 📂 Project Structure
 
 ```
-vault/
+hellock/
 ├── app/
 │   ├── layout.jsx                      # Root layout with AuthProvider
 │   ├── page.jsx                        # Clean session redirect (/dashboard vs /login)
@@ -179,7 +179,7 @@ Because Hellock operates a true multi-node distributed cluster with background h
 ### ✅ Recommended: Persistent Server or Container (100% Works)
 Platforms that provide a persistent Node.js environment or Docker container support the 4 micro-nodes, persistent disk volumes, and continuous 10s health check cron jobs:
 - **Render** (Free / Starter Web Service): Connect GitHub repo, set Build Command to `npm run build`, Start Command to `npm start`.
-- **Railway**: 1-click deploy using the included [`Dockerfile`](file:///Users/deep/.gemini/antigravity/scratch/vault/Dockerfile).
+- **Railway**: 1-click deploy using the included [`Dockerfile`](file:///Users/deep/.gemini/antigravity/scratch/hellock/Dockerfile).
 - **Fly.io** or **DigitalOcean App Platform** or **VPS (EC2 / Linode / Hetzner)**.
 
 ### ⚠️ Note on Serverless Hosting (Vercel / Netlify)

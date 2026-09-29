@@ -8,7 +8,7 @@ export async function GET(request) {
   const stream = new ReadableStream({
     start(controller) {
       // Send initial connection event
-      const initialMsg = `data: ${JSON.stringify({ type: 'CONNECTED', message: 'SSE Stream Connected to Vault Node Cluster', timestamp: new Date().toISOString() })}\n\n`;
+      const initialMsg = `data: ${JSON.stringify({ type: 'CONNECTED', message: 'SSE Stream Connected to Hellock Node Cluster', timestamp: new Date().toISOString() })}\n\n`;
       controller.enqueue(encoder.encode(initialMsg));
 
       const onSystemEvent = (event) => {

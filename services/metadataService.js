@@ -62,6 +62,8 @@ async function _readRawMetadata() {
     const parsed = await readMetadataRaw();
     if (!parsed) return JSON.parse(JSON.stringify(DEFAULT_METADATA));
     return {
+      _revision: parsed._revision || 1,
+      _lastUpdated: parsed._lastUpdated || new Date().toISOString(),
       files: parsed.files || {},
       nodes: { ...DEFAULT_METADATA.nodes, ...(parsed.nodes || {}) },
       stats: { ...DEFAULT_METADATA.stats, ...(parsed.stats || {}) }
@@ -131,7 +133,9 @@ export async function getUserAccessibleFiles(userEmail) {
       const owner = (f.owner || '').toLowerCase();
       if (owner === normalized) return true;
       const authorized = (f.authorizedAccounts || []).map(a => a.toLowerCase());
-      return authorized.includes(normalized);
+      if (authorized.includes(normalized)) return true;
+      if (f.isPublic) return true;
+      return false;
     });
   });
 }
@@ -151,8 +155,8 @@ export async function setFileMetadata(fileId, fileData) {
       mimeType: fileData.mimeType || existing.mimeType || 'application/octet-stream',
       hash: fileData.hash || existing.hash,
       version: fileData.version !== undefined ? fileData.version : (existing.version || 1),
-      owner: (fileData.owner || existing.owner || 'demo@vault.local').toLowerCase(),
-      ownerName: fileData.ownerName || existing.ownerName || 'Vault User',
+      owner: (fileData.owner || existing.owner || 'demo@hellock.local').toLowerCase(),
+      ownerName: fileData.ownerName || existing.ownerName || 'Hellock User',
       authorizedAccounts: [
         ...new Set([
           ...(existing.authorizedAccounts || []),
@@ -285,6 +289,28 @@ export async function revokeFileSharing(fileId, requesterEmail, targetEmail) {
       await _writeRawMetadata(meta);
     }
 
+    return file;
+  });
+}
+
+/**
+ * Toggles public link access ("Anyone with the link") for a file.
+ */
+export async function setFilePublicAccess(fileId, requesterEmail, isPublic) {
+  const reqNorm = (requesterEmail || '').toLowerCase();
+
+  return await metaMutex.runExclusive(async () => {
+    const meta = await _readRawMetadata();
+    const file = meta.files[fileId];
+    if (!file) throw new Error(`File ${fileId} not found.`);
+
+    if (file.owner && file.owner.toLowerCase() !== reqNorm) {
+      throw new Error('Unauthorized: Only the file owner can change link access.');
+    }
+
+    file.isPublic = Boolean(isPublic);
+    file.updatedAt = new Date().toISOString();
+    await _writeRawMetadata(meta);
     return file;
   });
 }

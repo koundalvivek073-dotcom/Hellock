@@ -27,11 +27,41 @@ function env(name) {
 }
 
 /**
+ * True while `next build` is running.
+ *
+ * This matters because Netlify/Vercel run the build on the same platform that
+ * serves the site, so NETLIFY=true / VERCEL=1 are set during `next build` too.
+ * Without this check the app would conclude "serverless" at build time and:
+ *   - skip the disk backend in favour of Netlify Blobs (unavailable in a build
+ *     worker -> the store falls back to memory, or the write fails),
+ *   - auto-start the node-cron loops at module evaluation, keeping the build
+ *     process alive forever so the build times out and Netlify publishes
+ *     nothing (every route then 404s).
+ *
+ * `next build` sets NODE_ENV=production for the whole build, so it cannot be
+ * used to detect this. NEXT_PHASE is the reliable signal.
+ */
+export function isBuildPhase() {
+  if (env('NEXT_PHASE') === 'phase-production-build') return true;
+  // Next 14 also exposes this flag to the build workers.
+  return TRUTHY.has((env('NEXT_BUILD_PHASE') || '').toLowerCase());
+}
+
+/**
  * True when the process is running on a serverless/edge function platform
  * (Netlify Functions, Vercel). Detection is based on the platform-injected
  * env vars, which are the documented contract of both runtimes.
+ *
+ * During `next build` this deliberately returns false: the build is a
+ * short-lived, single-shot process that must behave like a plain Node process
+ * (write to its own disk, bind nothing, exit cleanly). Note that this makes the
+ * build use the DISK backend, which is correct: `data/nodes` and
+ * `data/metadata.json` are build inputs, not build outputs, and they are never
+ * bundled into the Netlify Function. At runtime NEXT_PHASE is unset, so
+ * isServerless() is true again and Netlify Blobs is selected as intended.
  */
 export function isServerless() {
+  if (isBuildPhase()) return false;
   if (TRUTHY.has((env('HELLOCK_SERVERLESS') || '').toLowerCase())) return true;
   if (env('NETLIFY') === 'true' || env('NETLIFY_LOCAL') === 'true') return true;
   if (env('VERCEL') === '1' || env('VERCEL_ENV')) return true;
@@ -54,6 +84,10 @@ export function isPersistentRuntime() {
  * persistent host (e.g. to run against remote object storage everywhere).
  */
 export function microNodesEnabled() {
+  // Never bind TCP ports while building: the ports are useless to a build and
+  // an open listener prevents the process from exiting.
+  if (isBuildPhase()) return false;
+
   const override = (env('HELLOCK_ENABLE_MICRO_NODES') || '').toLowerCase();
   if (override === 'false' || override === '0' || override === 'no' || override === 'off') {
     return false;

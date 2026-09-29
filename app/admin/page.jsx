@@ -154,7 +154,7 @@ export default function AdminDemoPage() {
         filename: `consensus_block_${Date.now().toString().slice(-4)}.json`,
         content: JSON.stringify(
           {
-            clusterId: "vault-distributed-core-alpha",
+            clusterId: "hellock-distributed-core-alpha",
             timestamp: new Date().toISOString(),
             metrics: {
               replicatedQuorum: "2/3",
@@ -280,7 +280,7 @@ export default function AdminDemoPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-                VAULT
+                HELLOCK
               </h1>
               <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800/60 font-mono">
                 MISSION CONTROL

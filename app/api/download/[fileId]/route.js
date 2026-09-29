@@ -12,21 +12,32 @@ export async function GET(request, { params }) {
   const { fileId } = params;
 
   try {
-    const user = await requireUserOrDemo(request);
-    const { searchParams } = new URL(request.url);
-    const effectiveEmail = searchParams.get('user') || user.email;
-
     const file = await getFileMetadata(fileId);
     if (!file) {
       return NextResponse.json({ error: `File not found: ${fileId}` }, { status: 404 });
     }
 
-    // Access control: verify requesting user owns or has been granted access to this file
-    if (!hasFileAccess(file, effectiveEmail)) {
-      return NextResponse.json(
-        { error: 'Access denied: You do not have permission to download this file.' },
-        { status: 403 }
-      );
+    // Access control:
+    // If file is marked public, anyone with the link can access without login (Google Drive style)
+    let effectiveEmail = null;
+    if (!file.isPublic) {
+      try {
+        const user = await requireUserOrDemo(request);
+        const { searchParams } = new URL(request.url);
+        effectiveEmail = searchParams.get('user') || user?.email;
+      } catch (authErr) {
+        return NextResponse.json(
+          { error: 'Access denied: Please sign in or request access to download this restricted file.' },
+          { status: 401 }
+        );
+      }
+
+      if (!hasFileAccess(file, effectiveEmail)) {
+        return NextResponse.json(
+          { error: 'Access denied: You do not have permission to download this file.' },
+          { status: 403 }
+        );
+      }
     }
 
     // Try reading from synced nodes first, then any node

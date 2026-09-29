@@ -39,6 +39,13 @@
     #     failover running when nobody has the site open.
     HELLOCK_SERVERLESS = "true"
 
+    # NOTE: this var is ALSO set during `next build`, because Netlify builds on
+    # the same platform that serves the site. Services therefore check
+    # isBuildPhase() (services/runtime.js) before acting on it: during a build
+    # the app must not bind ports and must not schedule cron timers, otherwise
+    # the build process never exits, the build times out, and Netlify publishes
+    # nothing - which surfaces as a 404 on every route.
+
     # --- Durable storage ----------------------------------------------------
     # File bytes and cluster metadata both need a durable backend on Netlify:
     # the function bundle's filesystem is read-only and wiped on every cold

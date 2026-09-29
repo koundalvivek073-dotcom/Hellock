@@ -1,5 +1,6 @@
 import cron from 'node-cron';
 import { getAllNodes, updateNodeStatus, getMetadata, updateReplicaStatus } from './metadataService.js';
+import { isBuildPhase } from './runtime.js';
 import { pingNode, readFromNode, uploadToNode } from './nodeStorageService.js';
 import { recoverFailedNode } from './recoveryService.js';
 import eventBus from './eventBus.js';
@@ -179,11 +180,23 @@ async function reconcileRecoveredNode(nodeId) {
 export function startHealthCheckCron() {
   if (cronTask) return;
 
+  // `next build` imports every route module to collect page data. Scheduling a
+  // recurring timer here would keep the build process alive forever, so the
+  // build would time out and Netlify would publish nothing (-> 404 on every
+  // route). The cron is started by `next start` / `npm run dev` instead.
+  if (isBuildPhase()) {
+    if (!global._vaultCronBuildSkipped) {
+      global._vaultCronBuildSkipped = true;
+      console.log('[HELLOCK CRON] Build phase - in-process cron not started.');
+    }
+    return;
+  }
+
   if (!isPersistentRuntime()) {
     if (!global._vaultCronSkipped) {
       global._vaultCronSkipped = true;
       console.log(
-        '[VAULT CRON] Serverless runtime - in-process cron disabled. ' +
+        '[HELLOCK CRON] Serverless runtime - in-process cron disabled. ' +
         'Health checks run via /api/status polls and the Netlify scheduled function.'
       );
     }
@@ -195,7 +208,7 @@ export function startHealthCheckCron() {
     await runHealthCheck();
   });
 
-  console.log('[VAULT CRON] Background health check cron service active (10s interval).');
+  console.log('[HELLOCK CRON] Background health check cron service active (10s interval).');
 }
 
 /**

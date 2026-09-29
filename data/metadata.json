@@ -1,4 +1,6 @@
 {
+  "_revision": 352,
+  "_lastUpdated": "2026-09-29T15:17:27.751Z",
   "files": {
     "file_1790370768588_7fe1b3a5": {
       "fileId": "file_1790370768588_7fe1b3a5",
@@ -574,6 +576,76 @@
           "lastVerified": null
         }
       }
+    },
+    "file_1790690484103_c0663433": {
+      "fileId": "file_1790690484103_c0663433",
+      "filename": "cluster-live-test.txt",
+      "size": 32,
+      "mimeType": "text/plain",
+      "hash": "ead56e193278e4d027833d6c0c1d9042043cbe4f7a74802d1837af58934abe1a",
+      "version": 1,
+      "owner": "admin@vault.local",
+      "ownerName": "Demo Engineer",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-29T14:01:24.114Z",
+      "updatedAt": "2026-09-29T14:01:24.136Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-29T14:01:24.136Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-29T14:01:24.128Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-29T14:01:24.133Z"
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
+    },
+    "file_1790695047660_c9884d48": {
+      "fileId": "file_1790695047660_c9884d48",
+      "filename": "Screenshot (1).png",
+      "size": 324076,
+      "mimeType": "image/png",
+      "hash": "850cf7dfefb6b916aa30d49a6c5b05909e786a33bc4eca3cd6b1a3098bbf805d",
+      "version": 1,
+      "owner": "+917657934423",
+      "ownerName": "Vivek Koundal",
+      "authorizedAccounts": [],
+      "createdAt": "2026-09-29T15:17:27.681Z",
+      "updatedAt": "2026-09-29T15:17:27.745Z",
+      "replicas": {
+        "nodeA": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-29T15:17:27.745Z"
+        },
+        "nodeB": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-29T15:17:27.728Z"
+        },
+        "nodeC": {
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-29T15:17:27.735Z"
+        },
+        "nodeD": {
+          "status": "missing",
+          "version": 0,
+          "lastVerified": null
+        }
+      }
     }
   },
   "nodes": {
@@ -583,7 +655,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-26T18:31:10.622Z",
+      "lastPing": "2026-09-29T14:15:00.371Z",
       "simulatedFailure": false
     },
     "nodeB": {
@@ -592,7 +664,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-26T18:31:10.632Z",
+      "lastPing": "2026-09-29T14:15:00.379Z",
       "simulatedFailure": false
     },
     "nodeC": {
@@ -601,7 +673,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-26T18:31:10.637Z",
+      "lastPing": "2026-09-29T14:15:00.385Z",
       "simulatedFailure": false
     },
     "nodeD": {
@@ -610,12 +682,12 @@
       "role": "standby",
       "status": "standby",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-26T18:31:10.640Z",
+      "lastPing": "2026-09-29T14:15:00.391Z",
       "simulatedFailure": false
     }
   },
   "stats": {
-    "totalUploads": 12,
+    "totalUploads": 14,
     "totalRecoveries": 5,
     "totalIntegrityChecks": 17
   }

@@ -1,5 +1,6 @@
 import cron from 'node-cron';
 import { getMetadata, updateReplicaStatus, incrementStat } from './metadataService.js';
+import { isBuildPhase, isPersistentRuntime } from './runtime.js';
 import { readFromNode } from './nodeStorageService.js';
 import { calculateHash } from '../lib/hash.js';
 import { healCorruptedReplica } from './recoveryService.js';
@@ -13,7 +14,7 @@ let isRunningIntegrity = false;
  * Re-hashes every physical replica and compares against the canonical
  * SHA-256 master hash in metadata. Automatically triggers healing on any
  * detected corruption or missing replica.
- * 
+ *
  * @returns {Promise<object>} Audit summary
  */
 export async function runIntegrityCheck() {
@@ -103,11 +104,25 @@ export async function runIntegrityCheck() {
             results.corrupted++;
             await updateReplicaStatus(file.fileId, nodeId, 'corrupted');
 
+            // Granular block/chunk detection
+            let corruptedChunk = null;
+            if (file.chunks && Array.isArray(file.chunks) && file.chunks.length > 0) {
+              for (const ch of file.chunks) {
+                const slice = buffer.subarray(ch.offset, ch.offset + ch.size);
+                if (calculateHash(slice).toLowerCase() !== (ch.hash || '').toLowerCase()) {
+                  corruptedChunk = ch.chunkIndex;
+                  break;
+                }
+              }
+            }
+            const chunkNote = corruptedChunk !== null ? ` (Chunk #${corruptedChunk})` : '';
+
             eventBus.emitEvent('CORRUPTION_DETECTED', {
-              message: `🚨 CORRUPTION DETECTED: "${file.filename}" on ${nodeId} failed checksum! Master: ${file.hash.substring(0, 10)}... vs Disk: ${physicalHash.substring(0, 10)}... Triggering automatic recovery...`,
+              message: `🚨 CORRUPTION DETECTED: "${file.filename}" on ${nodeId} failed checksum${chunkNote}! Master: ${file.hash.substring(0, 10)}... vs Disk: ${physicalHash.substring(0, 10)}... Triggering automatic recovery...`,
               fileId: file.fileId,
               filename: file.filename,
               nodeId,
+              corruptedChunk,
               expectedHash: file.hash,
               actualHash: physicalHash
             });
@@ -125,6 +140,7 @@ export async function runIntegrityCheck() {
               filename: file.filename,
               nodeId,
               status: 'corrupted_and_healed',
+              corruptedChunk,
               expectedHash: file.hash,
               actualHash: physicalHash
             });
@@ -155,12 +171,26 @@ export async function runIntegrityCheck() {
 export function startIntegrityCron() {
   if (integrityCron) return;
 
+  // See startHealthCheckCron() in healthCheckService.js: a recurring timer
+  // started during `next build` prevents the build process from exiting.
+  if (isBuildPhase()) {
+    if (!global._vaultIntegrityBuildSkipped) {
+      global._vaultIntegrityBuildSkipped = true;
+      console.log('[HELLOCK CRON] Build phase - integrity cron not started.');
+    }
+    return;
+  }
+
+  // A serverless function is frozen between invocations, so a timer would never
+  // fire reliably; integrity checks run via the scheduled function instead.
+  if (!isPersistentRuntime()) return;
+
   // Run every minute
   integrityCron = cron.schedule('0 * * * * *', async () => {
     await runIntegrityCheck();
   });
 
-  console.log('[VAULT CRON] Periodic integrity verification cron service active (60s interval).');
+  console.log('[HELLOCK CRON] Periodic integrity verification cron service active (60s interval).');
 }
 
 // Auto-start on module load

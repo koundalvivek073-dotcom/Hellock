@@ -69,7 +69,7 @@ export default function DashboardPage() {
         className="sticky top-0 z-40 w-full border-b border-white/[0.06] bg-[#07080d]/80 backdrop-blur-2xl"
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          {/* Vault Brand Logo */}
+          {/* Hellock Brand Logo */}
           <div className="flex items-center gap-2.5">
             <motion.div
               whileHover={{ rotate: 8, scale: 1.05 }}
@@ -81,9 +81,9 @@ export default function DashboardPage() {
               </div>
             </motion.div>
             <div className="flex items-center gap-2">
-              <span className="font-black text-lg tracking-tight text-white">Vault</span>
+              <span className="font-black text-lg tracking-tight text-white">Hellock</span>
               <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-400 border border-cyan-800/60 font-semibold">
-                Hellock
+                Network
               </span>
             </div>
           </div>
@@ -194,7 +194,7 @@ export default function DashboardPage() {
       {/* Minimal Footer */}
       <footer className="w-full border-t border-white/[0.04] py-6 text-center text-xs text-slate-500 z-10">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>Vault Distributed Consensus Core • 99.999% Durability</span>
+          <span>Hellock Distributed Consensus Core • 99.999% Durability</span>
           <span className="flex items-center gap-1.5 text-slate-400">
             <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
             Triple Replicated with SHA-256 Self-Healing

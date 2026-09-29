@@ -31,8 +31,8 @@ export async function requireUserOrDemo(request = null) {
 
   // Fallback demo user for CLI/direct API demoing
   return {
-    id: 'demo-user@vault.local',
-    email: 'demo@vault.local',
+    id: 'demo-user@hellock.local',
+    email: 'demo@hellock.local',
     name: 'Demo Engineer',
     image: null
   };

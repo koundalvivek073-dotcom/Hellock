@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Sparkles, Lock, ArrowRight, Users, CheckCircle2, ChevronDown } from 'lucide-react';
+import { Shield, Sparkles, Lock, ArrowRight, Users, CheckCircle2, ChevronDown, Phone } from 'lucide-react';
+import PhoneLoginForm from './PhoneLoginForm';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function LoginForm() {
   const [demoEmail, setDemoEmail] = useState('alice.hacks@gmail.com');
   const [demoName, setDemoName] = useState('Alice (Owner)');
   const [showDemoSelector, setShowDemoSelector] = useState(false);
+  const [activeTab, setActiveTab] = useState('google'); // 'google' | 'phone'
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -67,11 +69,11 @@ export default function LoginForm() {
       </motion.div>
 
       {/* Logo & Tagline */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2 flex items-center justify-center gap-2">
-          <span>Vault</span>
+          <span>Hellock</span>
           <span className="text-[10px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-cyan-950/80 text-cyan-400 border border-cyan-800/60 font-semibold align-middle">
-            Hellock
+            Storage
           </span>
         </h1>
         <p className="text-sm font-medium text-slate-400">
@@ -79,8 +81,54 @@ export default function LoginForm() {
         </p>
       </div>
 
-      {/* Main Google Sign-In Action */}
-      <div className="space-y-4">
+      {/* Tab Switcher: Google / Phone */}
+      <div className="flex rounded-xl bg-slate-950/80 border border-white/[0.07] p-0.5 mb-5 gap-0.5">
+        <button
+          onClick={() => setActiveTab('google')}
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-[10px] text-xs font-semibold transition ${
+            activeTab === 'google'
+              ? 'bg-white/10 text-slate-100 shadow-sm'
+              : 'text-slate-500 hover:text-slate-300'
+          }`}
+        >
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.04h3.87c2.27-2.09 3.675-5.17 3.675-9.14z" /><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.87-3.04c-1.08.72-2.45 1.16-4.06 1.16-3.13 0-5.78-2.11-6.73-4.96H1.27v3.13C3.26 21.36 7.34 24 12 24z" /><path fill="#FBBC05" d="M5.27 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.62H1.27C.46 8.23 0 10.06 0 12s.46 3.77 1.27 5.38l4-3.13z" /><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.27 6.62l4 3.13c.95-2.85 3.6-4.96 6.73-4.96z" /></svg>
+          Google / Demo
+        </button>
+        <button
+          onClick={() => setActiveTab('phone')}
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-[10px] text-xs font-semibold transition ${
+            activeTab === 'phone'
+              ? 'bg-violet-600/20 text-violet-300 shadow-sm border border-violet-500/30'
+              : 'text-slate-500 hover:text-slate-300'
+          }`}
+        >
+          <Phone className="w-3.5 h-3.5" />
+          Phone OTP
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      <AnimatePresence mode="wait">
+        {activeTab === 'phone' ? (
+          <motion.div
+            key="phone-tab"
+            initial={{ opacity: 0, x: 18 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -18 }}
+            transition={{ duration: 0.2 }}
+          >
+            <PhoneLoginForm onBack={() => setActiveTab('google')} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="google-tab"
+            initial={{ opacity: 0, x: -18 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 18 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-4"
+          >
+        {/* Main Google Sign-In Action */}
         <motion.button
           whileHover={{ scale: 1.015, boxShadow: '0 0 30px rgba(255, 255, 255, 0.15)' }}
           whileTap={{ scale: 0.985 }}
@@ -191,7 +239,9 @@ export default function LoginForm() {
             </div>
           </motion.div>
         )}
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Footer Info */}
       <div className="mt-8 text-xs text-slate-500 flex items-center justify-center gap-1.5">

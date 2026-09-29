@@ -19,6 +19,8 @@ node_modules
 .env.development.local
 .env.test.local
 .env.production.local
+serviceAccountKey.json
+*firebase-adminsdk*.json
 
 # Debug logs
 npm-debug.log*

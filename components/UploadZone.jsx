@@ -172,7 +172,7 @@ export default function UploadZone({ onUploadSuccess }) {
               </div>
 
               <div className="font-bold text-slate-100 text-base mb-1">
-                {uploadSuccess ? 'Secured in Vault Replicas!' : 'Streaming to Quorum Nodes...'}
+                {uploadSuccess ? 'Secured in Hellock Replicas!' : 'Streaming to Quorum Nodes...'}
               </div>
               <div className="text-xs text-slate-400 font-mono truncate max-w-xs">
                 {currentFilename}
@@ -203,7 +203,7 @@ export default function UploadZone({ onUploadSuccess }) {
               </motion.div>
 
               <h3 className="text-lg font-bold text-slate-100 mb-1.5 tracking-tight">
-                Drop files into <span className="text-cyan-400 font-extrabold">Vault</span>, or browse
+                Drop files into <span className="text-cyan-400 font-extrabold">Hellock</span>, or browse
               </h3>
               <p className="text-xs text-slate-400 max-w-sm mb-6 leading-relaxed">
                 Files are parallel-written across independent storage nodes with quorum consensus and cryptographic checksums.

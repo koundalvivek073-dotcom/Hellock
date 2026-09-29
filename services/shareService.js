@@ -1,6 +1,7 @@
 import {
   shareFileWithUser,
   revokeFileSharing,
+  setFilePublicAccess,
   getFileMetadata,
   getUserAccessibleFiles
 } from './metadataService.js';
@@ -18,6 +19,9 @@ import eventBus from './eventBus.js';
  */
 export function hasFileAccess(file, userEmail) {
   if (!file) return false;
+  // If file is marked public, anyone with the link has access (like Google Drive)
+  if (file.isPublic) return true;
+
   if (!userEmail) return false;
 
   const normalizedUser = userEmail.trim().toLowerCase();
@@ -78,3 +82,26 @@ export async function revokeAccess(fileId, requesterEmail, targetEmail) {
 export async function getFilesForUser(userEmail) {
   return await getUserAccessibleFiles(userEmail);
 }
+
+/**
+ * Toggles public link access ("Anyone with the link") for a file.
+ * @param {string} fileId 
+ * @param {string} requesterEmail 
+ * @param {boolean} isPublic 
+ */
+export async function setPublicAccess(fileId, requesterEmail, isPublic) {
+  const updatedFile = await setFilePublicAccess(fileId, requesterEmail, isPublic);
+
+  eventBus.emitEvent('FILE_ACCESS_CHANGED', {
+    message: isPublic
+      ? `Link sharing enabled: "${updatedFile.filename}" is now PUBLIC (anyone with link can access)`
+      : `Link sharing updated: "${updatedFile.filename}" is now RESTRICTED to authorized users`,
+    fileId,
+    filename: updatedFile.filename,
+    owner: requesterEmail,
+    isPublic: Boolean(isPublic)
+  });
+
+  return updatedFile;
+}
+

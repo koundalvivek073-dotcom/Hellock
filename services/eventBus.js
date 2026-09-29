@@ -71,7 +71,7 @@ class SystemEventBus extends EventEmitter {
     }
 
     const message = event.message || JSON.stringify(event.payload || {});
-    console.log(`${bold}[VAULT ${time}]${reset} ${color}${bold}${tag}${reset} ${message}`);
+    console.log(`${bold}[HELLOCK ${time}]${reset} ${color}${bold}${tag}${reset} ${message}`);
   }
 }
 

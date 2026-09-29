@@ -18,7 +18,8 @@ import {
   Check,
   Sparkles,
   FileUp,
-  FolderOpen
+  FolderOpen,
+  Globe
 } from 'lucide-react';
 import ShareModal from './ShareModal';
 import { useToast } from './ToastProvider';
@@ -214,6 +215,16 @@ export default function FileGrid({ files = [], loading = false, onRefresh, curre
 
                     {/* Ownership / Share Badges */}
                     <div className="flex items-center gap-1.5">
+                      {file.isPublic && (
+                        <span
+                          title="Public: Anyone with the link can view & download"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-950/70 text-emerald-300 border border-emerald-800/50"
+                        >
+                          <Globe className="w-3 h-3 text-emerald-400" />
+                          <span>Public</span>
+                        </span>
+                      )}
+
                       {!isOwner ? (
                         <span
                           title={`Shared by ${file.sharedBy}`}
