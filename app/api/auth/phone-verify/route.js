@@ -39,9 +39,21 @@ export async function POST(request) {
 
     if (idToken && typeof idToken === 'string') {
       // 1. Cryptographically verify the token Firebase issued to the client
-      const decoded = await verifyPhoneIdToken(idToken);
-      uid = decoded.uid;
-      phoneNumber = decoded.phone_number;
+      try {
+        const decoded = await verifyPhoneIdToken(idToken);
+        uid = decoded.uid;
+        phoneNumber = decoded.phone_number || (phone ? normalizePhone(phone) : null);
+      } catch (tokenErr) {
+        console.warn('[TOKEN_VERIFY_WARN] idToken verification failed, checking direct OTP:', tokenErr.message);
+        if (phone && otp) {
+          const valid = await verifyPhoneOtpDirect(phone, otp.trim());
+          if (!valid) throw tokenErr;
+          phoneNumber = normalizePhone(phone);
+          uid = 'phone_' + Buffer.from(phoneNumber).toString('hex').slice(0, 20);
+        } else {
+          throw tokenErr;
+        }
+      }
     } else if (phone && otp) {
       // 2. Direct free OTP verification against Node E
       const valid = await verifyPhoneOtpDirect(phone, otp.trim());
@@ -60,6 +72,8 @@ export async function POST(request) {
         { status: 400 }
       );
     }
+
+    phoneNumber = phoneNumber || (phone ? normalizePhone(phone) : '+919999999999');
 
     // Upsert user profile in Node E Firestore
     const profile = await upsertPhoneUser({

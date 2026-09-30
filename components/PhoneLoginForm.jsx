@@ -137,9 +137,24 @@ export default function PhoneLoginForm({ onBack }) {
 
       if (confirmationResult && !directMode) {
         // Confirm OTP with Firebase (client-side)
-        const credential = await confirmationResult.confirm(otp);
-        const idToken = await credential.user.getIdToken();
-        verifyBody = { idToken, name: name.trim() || null };
+        try {
+          const credential = await confirmationResult.confirm(otp);
+          const idToken = await credential.user.getIdToken();
+          verifyBody = {
+            idToken,
+            phone: normalizePhone(phone.trim()),
+            otp: otp.trim(),
+            name: name.trim() || null,
+          };
+        } catch (firebaseErr) {
+          console.warn('[FIREBASE_CLIENT_CONFIRM_FAIL] Trying direct server verification:', firebaseErr.message);
+          // If Firebase client confirm failed, try direct verification against Node E
+          verifyBody = {
+            phone: normalizePhone(phone.trim()),
+            otp: otp.trim(),
+            name: name.trim() || null,
+          };
+        }
       } else {
         // Direct OTP verification against Node E Firestore
         verifyBody = {
@@ -156,8 +171,10 @@ export default function PhoneLoginForm({ onBack }) {
         body: JSON.stringify(verifyBody),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Server verification failed');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || data.message || data.hint || 'Server verification failed');
+      }
 
       // Mint NextAuth session
       const signInRes = await signIn('phone-otp', {
@@ -173,7 +190,7 @@ export default function PhoneLoginForm({ onBack }) {
         setStep('done');
         setTimeout(() => router.push('/dashboard'), 800);
       } else {
-        throw new Error('Session creation failed');
+        throw new Error(signInRes?.error || 'Session creation failed');
       }
     } catch (err) {
       console.error('[PHONE_OTP_VERIFY_ERR]', err);
