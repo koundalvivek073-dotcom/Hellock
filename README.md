@@ -1,3 +1,4 @@
+LIVE DEMO (Open [http://localhost:3000](http://localhost:3000) in your browser.) in your browser.
 # 🛡️ Hellock: Fault-Tolerant Distributed Object Storage
 
 **Hellock** is an AI-first, fault-tolerant distributed object storage system built for high-availability demonstrations. It showcases how modern distributed storage engines (modeled after Ceph, Cassandra, and Google Cloud Storage) handle hardware failures, network partitions, and silent bit rot without downtime or data loss.
@@ -89,9 +90,6 @@ When you run `npm run dev`, all 4 storage microservices automatically boot in-pr
 
 ```bash
 npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
