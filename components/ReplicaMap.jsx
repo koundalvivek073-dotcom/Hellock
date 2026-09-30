@@ -10,7 +10,8 @@ import {
   ShieldCheck,
   Loader2,
   Bug,
-  Zap
+  Zap,
+  Trash2
 } from 'lucide-react';
 
 const NODE_KEYS = ['nodeA', 'nodeB', 'nodeC', 'nodeD'];
@@ -55,6 +56,17 @@ export default function ReplicaMap({ files = [], onRefresh, config = {} }) {
 
   const replicationFactor = config.replicationFactor || 3;
   const writeQuorum = config.writeQuorum || 2;
+
+  const deleteFile = async (fileId, filename) => {
+    if (!confirm(`Permanently delete "${filename}" from all cluster nodes?`)) return;
+    setBusy(`delete:${fileId}`);
+    try {
+      await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
+      onRefresh?.();
+    } finally {
+      setBusy(null);
+    }
+  };
 
   const corrupt = async (fileId, nodeId) => {
     setBusy(`${fileId}:${nodeId}`);
@@ -261,54 +273,73 @@ export default function ReplicaMap({ files = [], onRefresh, config = {} }) {
 
           return (
             <div key={file.fileId} className="px-5 py-3.5 hover:bg-slate-950/30 transition">
-              <button
-                onClick={() => setExpanded(isOpen ? null : file.fileId)}
-                className="w-full flex items-center gap-3 text-left"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-slate-200 truncate">
-                      {file.filename}
-                    </span>
-                    <span className="px-1.5 py-0.5 rounded bg-slate-800 text-[9px] font-mono text-slate-400 flex-shrink-0">
-                      v{file.version || 1}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span
-                      className={`text-[10px] font-bold ${hasQuorum ? 'text-emerald-400' : 'text-rose-400'}`}
-                    >
-                      {syncedCount}/{NODE_KEYS.length} replicas
-                    </span>
-                    {degraded > 0 && (
-                      <span className="text-[10px] text-rose-400 font-semibold">
-                        • {degraded} degraded
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setExpanded(isOpen ? null : file.fileId)}
+                  className="flex-1 min-w-0 flex items-center gap-3 text-left"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-slate-200 truncate">
+                        {file.filename}
                       </span>
-                    )}
-                    <span className="text-[10px] text-slate-600 font-mono truncate">
-                      {file.hash?.slice(0, 16)}...
-                    </span>
-                  </div>
-                </div>
-
-                {/* Mini replica cells */}
-                <div className="flex gap-1 flex-shrink-0">
-                  {NODE_KEYS.map((n) => {
-                    const status = replicas[n]?.status || 'missing';
-                    const S = STATUS_STYLE[status] || STATUS_STYLE.missing;
-                    return (
-                      <div
-                        key={n}
-                        title={`${n.toUpperCase()}: ${S.label}`}
-                        className={`w-9 h-8 rounded-md border flex flex-col items-center justify-center transition ${S.cell}`}
+                      <span className="px-1.5 py-0.5 rounded bg-slate-800 text-[9px] font-mono text-slate-400 flex-shrink-0">
+                        v{file.version || 1}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span
+                        className={`text-[10px] font-bold ${hasQuorum ? 'text-emerald-400' : 'text-rose-400'}`}
                       >
-                        <span className="text-[8px] font-black leading-none">{n.slice(-1).toUpperCase()}</span>
-                        <S.icon className="w-2.5 h-2.5 mt-0.5" />
-                      </div>
-                    );
-                  })}
-                </div>
-              </button>
+                        {syncedCount}/{NODE_KEYS.length} replicas
+                      </span>
+                      {degraded > 0 && (
+                        <span className="text-[10px] text-rose-400 font-semibold">
+                          • {degraded} degraded
+                        </span>
+                      )}
+                      <span className="text-[10px] text-slate-600 font-mono truncate">
+                        {file.hash?.slice(0, 16)}...
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Mini replica cells */}
+                  <div className="flex gap-1 flex-shrink-0">
+                    {NODE_KEYS.map((n) => {
+                      const status = replicas[n]?.status || 'missing';
+                      const S = STATUS_STYLE[status] || STATUS_STYLE.missing;
+                      return (
+                        <div
+                          key={n}
+                          title={`${n.toUpperCase()}: ${S.label}`}
+                          className={`w-9 h-8 rounded-md border flex flex-col items-center justify-center transition ${S.cell}`}
+                        >
+                          <span className="text-[8px] font-black leading-none">{n.slice(-1).toUpperCase()}</span>
+                          <S.icon className="w-2.5 h-2.5 mt-0.5" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </button>
+
+                {/* Delete button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteFile(file.fileId, file.filename);
+                  }}
+                  disabled={busy === `delete:${file.fileId}`}
+                  title="Delete file permanently from cluster"
+                  className="p-1.5 rounded-lg bg-slate-900 hover:bg-rose-950/60 text-slate-500 hover:text-rose-400 border border-slate-800 hover:border-rose-500/40 transition disabled:opacity-50"
+                >
+                  {busy === `delete:${file.fileId}` ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              </div>
 
               {/* Expanded detail */}
               <AnimatePresence>
