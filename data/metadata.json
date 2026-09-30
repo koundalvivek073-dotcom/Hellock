@@ -1,6 +1,6 @@
 {
-  "_revision": 352,
-  "_lastUpdated": "2026-09-29T15:17:27.751Z",
+  "_revision": 571,
+  "_lastUpdated": "2026-09-30T03:28:20.954Z",
   "files": {
     "file_1790370768588_7fe1b3a5": {
       "fileId": "file_1790370768588_7fe1b3a5",
@@ -488,7 +488,7 @@
       "ownerName": "Vault User",
       "authorizedAccounts": [],
       "createdAt": "2026-09-26T17:15:07.280Z",
-      "updatedAt": "2026-09-26T17:15:07.280Z",
+      "updatedAt": "2026-09-30T03:25:30.271Z",
       "replicas": {
         "nodeA": {
           "status": "synced",
@@ -500,9 +500,9 @@
           "lastVerified": null
         },
         "nodeC": {
-          "status": "missing",
-          "version": 0,
-          "lastVerified": null
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-30T03:25:30.271Z"
         },
         "nodeD": {
           "status": "missing",
@@ -521,7 +521,7 @@
       "ownerName": "Vault User",
       "authorizedAccounts": [],
       "createdAt": "2026-09-26T17:15:17.027Z",
-      "updatedAt": "2026-09-26T17:15:17.027Z",
+      "updatedAt": "2026-09-30T03:25:30.294Z",
       "replicas": {
         "nodeA": {
           "status": "synced",
@@ -533,9 +533,9 @@
           "lastVerified": null
         },
         "nodeC": {
-          "status": "missing",
-          "version": 0,
-          "lastVerified": null
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-30T03:25:30.294Z"
         },
         "nodeD": {
           "status": "missing",
@@ -554,7 +554,7 @@
       "ownerName": "Vault User",
       "authorizedAccounts": [],
       "createdAt": "2026-09-26T17:19:54.757Z",
-      "updatedAt": "2026-09-26T17:19:54.757Z",
+      "updatedAt": "2026-09-30T03:25:30.308Z",
       "replicas": {
         "nodeA": {
           "status": "synced",
@@ -566,9 +566,9 @@
           "lastVerified": null
         },
         "nodeC": {
-          "status": "missing",
-          "version": 0,
-          "lastVerified": null
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-30T03:25:30.308Z"
         },
         "nodeD": {
           "status": "missing",
@@ -623,7 +623,7 @@
       "ownerName": "Vivek Koundal",
       "authorizedAccounts": [],
       "createdAt": "2026-09-29T15:17:27.681Z",
-      "updatedAt": "2026-09-29T15:17:27.745Z",
+      "updatedAt": "2026-09-30T03:19:24.162Z",
       "replicas": {
         "nodeA": {
           "status": "synced",
@@ -641,11 +641,12 @@
           "lastVerified": "2026-09-29T15:17:27.735Z"
         },
         "nodeD": {
-          "status": "missing",
-          "version": 0,
-          "lastVerified": null
+          "status": "synced",
+          "version": 1,
+          "lastVerified": "2026-09-30T03:19:24.162Z"
         }
-      }
+      },
+      "isPublic": true
     }
   },
   "nodes": {
@@ -655,7 +656,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-29T14:15:00.371Z",
+      "lastPing": "2026-09-30T03:28:20.937Z",
       "simulatedFailure": false
     },
     "nodeB": {
@@ -664,7 +665,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-29T14:15:00.379Z",
+      "lastPing": "2026-09-30T03:28:20.942Z",
       "simulatedFailure": false
     },
     "nodeC": {
@@ -673,7 +674,7 @@
       "role": "primary",
       "status": "healthy",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-29T14:15:00.385Z",
+      "lastPing": "2026-09-30T03:28:20.948Z",
       "simulatedFailure": false
     },
     "nodeD": {
@@ -682,7 +683,7 @@
       "role": "standby",
       "status": "standby",
       "consecutiveFailures": 0,
-      "lastPing": "2026-09-29T14:15:00.391Z",
+      "lastPing": "2026-09-30T03:28:20.954Z",
       "simulatedFailure": false
     }
   },
