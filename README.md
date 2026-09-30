@@ -1,4 +1,4 @@
-LIVE DEMO (Open [http://localhost:3000](http://localhost:3000) in your browser.) in your browser.
+LIVE DEMO (Open [https://hel-lock.netlify.app/login](https://hel-lock.netlify.app/login) in your browser.) in your browser.
 # 🛡️ Hellock: Fault-Tolerant Distributed Object Storage
 
 **Hellock** is an AI-first, fault-tolerant distributed object storage system built for high-availability demonstrations. It showcases how modern distributed storage engines (modeled after Ceph, Cassandra, and Google Cloud Storage) handle hardware failures, network partitions, and silent bit rot without downtime or data loss.
