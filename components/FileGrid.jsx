@@ -19,7 +19,10 @@ import {
   Sparkles,
   FileUp,
   FolderOpen,
-  Globe
+  Globe,
+  Trash2,
+  AlertTriangle,
+  Loader2
 } from 'lucide-react';
 import ShareModal from './ShareModal';
 import { useToast } from './ToastProvider';
@@ -27,6 +30,8 @@ import { useToast } from './ToastProvider';
 export default function FileGrid({ files = [], loading = false, onRefresh, currentUser }) {
   const [selectedFileForShare, setSelectedFileForShare] = useState(null);
   const [downloadingId, setDownloadingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+  const [fileToDelete, setFileToDelete] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const toast = useToast();
 
@@ -70,6 +75,28 @@ export default function FileGrid({ files = [], loading = false, onRefresh, curre
       toast?.error(err.message, 'Download Error');
     } finally {
       setDownloadingId(null);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!fileToDelete) return;
+    try {
+      setDeletingId(fileToDelete.fileId);
+      const res = await fetch(`/api/files/${fileToDelete.fileId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast?.error(data.error || 'Failed to delete file', 'Deletion Failed');
+        return;
+      }
+      toast?.success(`Removed replicas from all storage nodes`, `"${fileToDelete.filename}" Deleted`);
+      setFileToDelete(null);
+      if (onRefresh) onRefresh();
+    } catch (err) {
+      toast?.error(err.message, 'Delete Error');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -235,7 +262,7 @@ export default function FileGrid({ files = [], loading = false, onRefresh, curre
                             alt="avatar"
                             className="w-3.5 h-3.5 rounded-full"
                           />
-                          <span>Shared by {file.sharedBy?.split('@')[0]}</span>
+                          <span>Shared by {file.sharedByName || file.sharedBy?.split('@')[0]}</span>
                         </span>
                       ) : sharedAccounts.length > 0 ? (
                         <span
@@ -292,22 +319,98 @@ export default function FileGrid({ files = [], loading = false, onRefresh, curre
                     {file.hash?.substring(0, 10)}...
                   </span>
 
-                  <motion.button
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => handleDownload(file)}
-                    disabled={downloadingId === file.fileId}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-cyan-600 text-slate-200 hover:text-white border border-white/[0.08] hover:border-transparent transition-all shadow-md disabled:opacity-50"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>{downloadingId === file.fileId ? 'Fetching...' : 'Download'}</span>
-                  </motion.button>
+                  <div className="flex items-center gap-1.5">
+                    {/* Delete button (Owner only or Admin) */}
+                    {isOwner && (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setFileToDelete(file)}
+                        className="p-1.5 rounded-xl bg-slate-900 hover:bg-rose-950/70 text-slate-400 hover:text-rose-400 border border-white/[0.08] hover:border-rose-500/30 transition-all shadow-sm"
+                        title="Delete file permanently"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </motion.button>
+                    )}
+
+                    <motion.button
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.96 }}
+                      onClick={() => handleDownload(file)}
+                      disabled={downloadingId === file.fileId}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-cyan-600 text-slate-200 hover:text-white border border-white/[0.08] hover:border-transparent transition-all shadow-md disabled:opacity-50"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>{downloadingId === file.fileId ? 'Fetching...' : 'Download'}</span>
+                    </motion.button>
+                  </div>
                 </div>
               </motion.div>
             );
           })}
         </motion.div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {fileToDelete && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 15 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-full max-w-md p-6 rounded-3xl vault-panel border border-rose-500/30 shadow-2xl overflow-hidden text-left"
+            >
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400">
+                  <AlertTriangle className="w-6 h-6 stroke-[2]" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-100">
+                    Delete File Permanently?
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Are you sure you want to delete <span className="font-semibold text-slate-200">"{fileToDelete.filename}"</span>?
+                  </p>
+                  <p className="text-[11px] text-rose-400/80 mt-2 bg-rose-950/40 p-2 rounded-xl border border-rose-900/40">
+                    ⚠️ This will scrub all replicas across Node A, B, C, and D. This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex items-center justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setFileToDelete(null)}
+                  disabled={deletingId === fileToDelete.fileId}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmDelete}
+                  disabled={deletingId === fileToDelete.fileId}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white transition shadow-lg shadow-rose-900/40 disabled:opacity-50"
+                >
+                  {deletingId === fileToDelete.fileId ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Deleting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Delete File</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Share Modal Dialog */}
       <ShareModal
