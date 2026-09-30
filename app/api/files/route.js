@@ -26,6 +26,7 @@ export async function GET(request) {
         ...file,
         isOwner,
         sharedBy: isOwner ? null : (file.ownerName || file.owner),
+        sharedByName: isOwner ? null : (file.ownerName || file.owner?.split('@')[0] || file.owner),
         authorizedCount: (file.authorizedAccounts || []).length
       };
     });
