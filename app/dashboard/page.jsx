@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import UploadZone from '@/components/UploadZone';
 import FileGrid from '@/components/FileGrid';
-import { Shield, LogOut, Sparkles, Terminal, ChevronDown } from 'lucide-react';
+import SharedWithMePanel from '@/components/SharedWithMePanel';
+import { Shield, LogOut, Sparkles, Terminal, ChevronDown, FolderOpen, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function DashboardPage() {
@@ -15,6 +16,8 @@ export default function DashboardPage() {
   const [files, setFiles] = useState([]);
   const [loadingFiles, setLoadingFiles] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [activeTab, setActiveTab] = useState('my-files');
+  const [downloadingId, setDownloadingId] = useState(null);
 
   // If unauthenticated, redirect to login
   useEffect(() => {
@@ -45,6 +48,31 @@ export default function DashboardPage() {
     }
   }, [session, fetchFiles]);
 
+  const handleDownload = async (file) => {
+    try {
+      setDownloadingId(file.fileId);
+      const res = await fetch(`/api/download/${file.fileId}`);
+      if (!res.ok) {
+        const err = await res.json();
+        console.error('Download failed:', err.error);
+        return;
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download error:', err);
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#07080d]">
@@ -55,11 +83,63 @@ export default function DashboardPage() {
 
   const user = session?.user;
 
+  // Count shared files for badge
+  const sharedWithMeCount = files.filter((f) => !f.isOwner).length;
+
+  // Ambient cluster network particles for background
+  const clusterNodes = [
+    { x: '8%', y: '18%', color: 'from-cyan-400 to-blue-500', size: 10, delay: 0 },
+    { x: '88%', y: '14%', color: 'from-violet-500 to-indigo-500', size: 12, delay: 1.2 },
+    { x: '78%', y: '68%', color: 'from-emerald-400 to-teal-500', size: 8, delay: 2.1 },
+    { x: '12%', y: '72%', color: 'from-indigo-400 to-cyan-400', size: 10, delay: 0.8 },
+    { x: '50%', y: '92%', color: 'from-cyan-400 to-violet-500', size: 8, delay: 1.7 },
+    { x: '33%', y: '50%', color: 'from-rose-400 to-pink-500', size: 6, delay: 3.2 },
+    { x: '65%', y: '30%', color: 'from-amber-400 to-orange-500', size: 7, delay: 2.8 },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#07080d] bg-grain text-slate-100 flex flex-col relative overflow-hidden">
-      {/* Ambient Gradient Mesh Orbs */}
-      <div className="absolute top-10 left-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-indigo-600/10 via-violet-600/5 to-transparent rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-1/3 right-10 w-[450px] h-[450px] bg-gradient-to-bl from-cyan-500/10 via-blue-600/5 to-transparent rounded-full blur-[140px] pointer-events-none" />
+    <div className="min-h-screen bg-[#05060a] bg-grain text-slate-100 flex flex-col relative overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
+      {/* Perspective Cyber Grid Overlay */}
+      <div className="absolute inset-0 bg-cyber-grid pointer-events-none opacity-30 z-0" />
+
+      {/* Scanline overlay for depth */}
+      <div className="absolute inset-0 pointer-events-none z-0 opacity-[0.025]" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.5) 2px, rgba(255,255,255,0.5) 3px)', backgroundSize: '100% 3px' }} />
+
+      {/* Floating Animated Nebula Orbs — more dramatic, layered */}
+      <div className="absolute top-[-10%] left-[15%] w-[750px] h-[750px] bg-gradient-to-tr from-indigo-700/25 via-violet-700/12 to-transparent rounded-full blur-[160px] pointer-events-none animate-pulse-glow" />
+      <div className="absolute bottom-[10%] right-[-10%] w-[700px] h-[700px] bg-gradient-to-bl from-cyan-500/18 via-blue-700/12 to-transparent rounded-full blur-[160px] pointer-events-none animate-float-slow" />
+      <div className="absolute top-[40%] left-[-12%] w-[550px] h-[550px] bg-gradient-to-br from-emerald-600/12 via-teal-600/6 to-transparent rounded-full blur-[170px] pointer-events-none" />
+      <div className="absolute top-[20%] right-[20%] w-[400px] h-[400px] bg-gradient-to-bl from-violet-600/14 via-fuchsia-600/8 to-transparent rounded-full blur-[140px] pointer-events-none animate-pulse-glow" style={{ animationDelay: '4s' }} />
+      <div className="absolute bottom-0 left-[30%] w-[500px] h-[400px] bg-gradient-to-tr from-cyan-600/10 via-indigo-600/6 to-transparent rounded-full blur-[150px] pointer-events-none animate-float-slow" style={{ animationDelay: '7s' }} />
+
+      {/* Interactive Micro-Node Constellation Pins */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        {clusterNodes.map((node, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0.3 }}
+            animate={{
+              opacity: [0.3, 0.7, 0.3],
+              y: [0, -14, 0],
+              scale: [1, 1.15, 1],
+            }}
+            transition={{
+              duration: 6 + i * 1.5,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: node.delay,
+            }}
+            style={{ left: node.x, top: node.y }}
+            className="absolute flex items-center gap-2"
+          >
+            <div
+              className={`rounded-full bg-gradient-to-tr ${node.color} shadow-[0_0_16px_rgba(6,182,212,0.8)]`}
+              style={{ width: `${node.size}px`, height: `${node.size}px` }}
+            />
+            <div className="hidden md:block w-16 h-[1px] bg-gradient-to-r from-cyan-500/25 to-transparent" />
+          </motion.div>
+        ))}
+      </div>
 
       {/* Top Navbar */}
       <motion.header
@@ -166,7 +246,7 @@ export default function DashboardPage() {
       </motion.header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 space-y-12 z-10">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 space-y-10 z-10">
         {/* Upload Zone */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -176,18 +256,88 @@ export default function DashboardPage() {
           <UploadZone onUploadSuccess={fetchFiles} />
         </motion.section>
 
-        {/* File Grid */}
+        {/* Tab switcher: My Files | Shared with Me */}
         <motion.section
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          className="space-y-5"
         >
-          <FileGrid
-            files={files}
-            loading={loadingFiles}
-            onRefresh={fetchFiles}
-            currentUser={user}
-          />
+          {/* Tab Bar */}
+          <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-900/70 border border-white/[0.06] w-fit">
+            <button
+              onClick={() => setActiveTab('my-files')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                activeTab === 'my-files'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-[0_0_15px_rgba(6,182,212,0.3)]'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <FolderOpen className="w-3.5 h-3.5" />
+              <span>My Files</span>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
+                activeTab === 'my-files'
+                  ? 'bg-white/20 text-white'
+                  : 'bg-slate-800 text-slate-400'
+              }`}>
+                {files.filter(f => f.isOwner !== false).length}
+              </span>
+            </button>
+            <button
+              onClick={() => setActiveTab('shared')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                activeTab === 'shared'
+                  ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(139,92,246,0.3)]'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span>Shared with Me</span>
+              {sharedWithMeCount > 0 && (
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
+                  activeTab === 'shared'
+                    ? 'bg-white/20 text-white'
+                    : 'bg-violet-900/70 text-violet-300 border border-violet-700/60'
+                }`}>
+                  {sharedWithMeCount}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Tab Content */}
+          <AnimatePresence mode="wait">
+            {activeTab === 'my-files' ? (
+              <motion.div
+                key="my-files"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22 }}
+              >
+                <FileGrid
+                  files={files}
+                  loading={loadingFiles}
+                  onRefresh={fetchFiles}
+                  currentUser={user}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="shared"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22 }}
+              >
+                <SharedWithMePanel
+                  files={files}
+                  onDownload={handleDownload}
+                  downloadingId={downloadingId}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.section>
       </main>
 
