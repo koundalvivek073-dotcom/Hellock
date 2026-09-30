@@ -181,6 +181,23 @@ export async function setFileMetadata(fileId, fileData) {
 }
 
 /**
+ * Removes a file record from metadata.
+ * @param {string} fileId
+ */
+export async function deleteFileMetadata(fileId) {
+  return await metaMutex.runExclusive(async () => {
+    const meta = await _readRawMetadata();
+    if (!meta.files || !meta.files[fileId]) {
+      return null;
+    }
+    const removedFile = meta.files[fileId];
+    delete meta.files[fileId];
+    await _writeRawMetadata(meta);
+    return removedFile;
+  });
+}
+
+/**
  * Transactional atomic update helper:
  * Simulates Firestore's runTransaction(async (transaction) => { ... })
  * to guarantee atomic updates without race conditions.
